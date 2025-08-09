@@ -88,7 +88,7 @@ export default function HomePage() {
                             }`}
                         >
                             <Image
-                                src="/lessons.png"
+                                src="/lessons_done.png"
                                 alt="Lessons"
                                 width={120}
                                 height={120}
