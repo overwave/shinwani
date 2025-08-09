@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import "./Reviews.scss";
 
 interface Counts {
     lessons: number;
@@ -20,13 +21,7 @@ export default function Reviews({counts}: ReviewsProps) {
                     counts?.reviews ? "" : "bg-light text-muted"
                 }`}
             >
-                <Image
-                    src="/reviews.png"
-                    alt="Reviews"
-                    width={120}
-                    height={120}
-                    className="mx-auto"
-                />
+                <Image src="/reviews.png" alt="Reviews" width={120} height={120} className="mx-auto" />
                 <h4 className="mt-3">Reviews</h4>
 
                 {counts?.reviews ? (
@@ -37,32 +32,19 @@ export default function Reviews({counts}: ReviewsProps) {
 
                 {counts?.heap ? (
                     <div className="btn-group">
-                        <button
-                            className="btn btn-success"
-                            disabled={!counts?.reviews}
-                        >
+                        <button className="btn btn-success" disabled={!counts?.reviews}>
                             All Reviews
                         </button>
-                        <button
-                            className="btn btn-outline-success"
-                            disabled={!counts?.heap}
-                        >
+                        <button className="btn btn-outline-success" disabled={!counts?.heap}>
                             Top {counts.heap}
                         </button>
 
                         {counts.heap > 0 && (
-                            <span
-                                className="badge-top"
-                            >
-                                Take the top {counts.heap}
-                            </span>
+                            <span className="reviews-heap-badge">Take the top {counts.heap}</span>
                         )}
                     </div>
                 ) : (
-                    <button
-                        className="btn btn-success"
-                        disabled={!counts?.reviews}
-                    >
+                    <button className="btn btn-success" disabled={!counts?.reviews}>
                         Start Reviews
                     </button>
                 )}
