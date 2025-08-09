@@ -11,3 +11,19 @@
   @extend .rounded-pill;
   @extend .px-2;
 }
+
+.dropdown-toggle-custom {
+  &:focus {
+    box-shadow: none !important;
+  }
+  
+  &:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+  }
+  
+  // Remove the default dropdown arrow since we're using an image
+  &::after {
+    display: none !important;
+  }
+}
