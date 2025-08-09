@@ -1,0 +1,13 @@
+@import "bootstrap/scss/bootstrap";
+
+.navbar-user-badge {
+  @extend .badge;
+  @extend .bg-secondary-subtle;
+  @extend .text-primary;
+  @extend .position-absolute;
+  @extend .top-100;
+  @extend .start-50;
+  @extend .translate-middle;
+  @extend .rounded-pill;
+  @extend .px-2;
+}

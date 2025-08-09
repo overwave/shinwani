@@ -1,0 +1,13 @@
+@import "bootstrap/scss/bootstrap";
+
+// Warning badge positioned at top-right
+.reviews-heap-badge {
+  @extend .badge;
+  @extend .bg-warning;
+  @extend .text-dark;
+  @extend .position-absolute;
+  @extend .top-0;
+  @extend .start-100;
+
+  transform: translate(-70%, 0%) rotate(15deg);
+}
