@@ -22,11 +22,11 @@ export default function Navbar({ user }: NavbarProps) {
     return (
         <BootstrapNavbar bg="light" expand="lg" className="px-3">
             <BootstrapNavbar.Brand href="#" className="fw-bold">Shin Wani</BootstrapNavbar.Brand>
-            <Form className="d-flex ms-auto me-3">
-                <FormControl type="search" placeholder="Search" aria-label="Search" className="me-2" />
+            <Form className="d-flex ms-auto">
+                <FormControl type="search" placeholder="Search" aria-label="Search"/>
             </Form>
             {user && (
-                <Dropdown align="end">
+                <Dropdown align="end" className="ms-4">
                     <Dropdown.Toggle 
                         variant="light" 
                         id="user-dropdown"
