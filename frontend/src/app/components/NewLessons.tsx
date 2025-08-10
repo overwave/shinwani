@@ -31,6 +31,7 @@ export default function NewLessons({ counts }: NewLessonsProps) {
                     <Button 
                         variant={counts?.lessons ? "primary" : "secondary"} 
                         disabled={!counts?.lessons}
+                        className="w-100"
                     >
                         Start Lessons
                     </Button>

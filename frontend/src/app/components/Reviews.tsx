@@ -32,7 +32,7 @@ export default function Reviews({counts}: ReviewsProps) {
                     )}
 
                     {counts?.heap ? (
-                        <ButtonGroup>
+                        <ButtonGroup className="w-100">
                             <Button variant="success" disabled={!counts?.reviews}>
                                 All Reviews
                             </Button>
@@ -40,14 +40,14 @@ export default function Reviews({counts}: ReviewsProps) {
                                 Top {counts.heap}
                             </Button>
 
-                            {counts.heap > 0 && (
-                                <Badge bg="info" className="reviews-heap-badge">
-                                    Take the top {counts.heap}
-                                </Badge>
-                            )}
+                            {/*{counts.heap > 0 && (*/}
+                            {/*    <Badge bg="info" className="reviews-heap-badge">*/}
+                            {/*        Take the top {counts.heap}*/}
+                            {/*    </Badge>*/}
+                            {/*)}*/}
                         </ButtonGroup>
                     ) : (
-                        <Button variant="success" disabled={!counts?.reviews}>
+                        <Button variant="success" disabled={!counts?.reviews} className="w-100">
                             Start Reviews
                         </Button>
                     )}
