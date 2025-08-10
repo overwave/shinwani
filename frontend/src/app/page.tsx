@@ -1,6 +1,7 @@
 "use client";
 
 import {useEffect, useState} from "react";
+import { Container, Row, Col, Spinner } from "react-bootstrap";
 import Navbar from "./components/Navbar";
 import NewLessons from "./components/NewLessons";
 import Reviews from "./components/Reviews";
@@ -42,21 +43,25 @@ export default function HomePage() {
 
     if (loading) {
         return (
-            <div className="container text-center mt-5">
-                <div className="spinner-border" role="status"></div>
-            </div>
+            <Container className="text-center mt-5">
+                <Spinner animation="border" role="status" />
+            </Container>
         );
     }
 
     return (
         <>
             <Navbar user={user} />
-            <div className="container mt-4">
-                <div className="row g-4">
-                    <NewLessons counts={counts} />
-                    <Reviews counts={counts} />
-                </div>
-            </div>
+            <Container className="mt-4">
+                <Row className="g-4">
+                    <Col md={6}>
+                        <NewLessons counts={counts} />
+                    </Col>
+                    <Col md={6}>
+                        <Reviews counts={counts} />
+                    </Col>
+                </Row>
+            </Container>
         </>
     );
 }
