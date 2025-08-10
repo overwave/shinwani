@@ -20,45 +20,78 @@ interface Counts {
 export default function HomePage() {
     const [user, setUser] = useState<User | null>(null);
     const [counts, setCounts] = useState<Counts | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [userLoading, setUserLoading] = useState(true);
+    const [countsLoading, setCountsLoading] = useState(true);
 
     useEffect(() => {
-        async function fetchData() {
+        async function fetchUser() {
             try {
-                const [userRes, countsRes] = await Promise.all([
-                    fetch("/api/user").then((r) => r.json()),
-                    fetch("/api/counts").then((r) => r.json()),
-                ]);
+                const userRes = await fetch("/api/user").then((r) => r.json());
                 setUser(userRes);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setUserLoading(false);
+            }
+        }
+
+        async function fetchCounts() {
+            try {
+                const countsRes = await fetch("/api/counts").then((r) => r.json());
                 setCounts(countsRes);
             } catch (err) {
                 console.error(err);
             } finally {
-                setLoading(false);
+                setCountsLoading(false);
             }
         }
 
-        fetchData();
+        fetchUser();
+        fetchCounts();
     }, []);
-
-    if (loading) {
-        return (
-            <Container className="text-center mt-5">
-                <Spinner animation="border" role="status" />
-            </Container>
-        );
-    }
 
     return (
         <>
             <Navbar user={user} />
             <Container className="mt-4">
                 <Row className="g-4">
-                    <Col md={6}>
-                        <NewLessons counts={counts} />
+                    <Col md={12}>
+                        <div className="p-3">
+                            <h3 className="mb-3">WaniKani</h3>
+                            {countsLoading ? (
+                                <div className="text-center py-4">
+                                    <Spinner animation="border" role="status" />
+                                </div>
+                            ) : (
+                                <Row className="g-3">
+                                    <Col md={6}>
+                                        <NewLessons counts={counts} />
+                                    </Col>
+                                    <Col md={6}>
+                                        <Reviews counts={counts} />
+                                    </Col>
+                                </Row>
+                            )}
+                        </div>
                     </Col>
-                    <Col md={6}>
-                        <Reviews counts={counts} />
+                    <Col md={12}>
+                        <div className="p-3">
+                            <h3 className="mb-3">Bunpro</h3>
+                            {countsLoading ? (
+                                <div className="text-center py-4">
+                                    <Spinner animation="border" role="status" />
+                                </div>
+                            ) : (
+                                <Row className="g-3">
+                                    <Col md={6}>
+                                        <NewLessons counts={counts} />
+                                    </Col>
+                                    <Col md={6}>
+                                        <Reviews counts={counts} />
+                                    </Col>
+                                </Row>
+                            )}
+                        </div>
                     </Col>
                 </Row>
             </Container>
