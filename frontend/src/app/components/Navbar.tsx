@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Dropdown } from "react-bootstrap";
+import { Dropdown, Navbar as BootstrapNavbar, Nav, Form, FormControl } from "react-bootstrap";
 import "./Navbar.scss";
 
 interface User {
@@ -20,11 +20,11 @@ export default function Navbar({ user }: NavbarProps) {
     };
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light px-3">
-            <a className="navbar-brand fw-bold" href="#">Shin Wani</a>
-            <form className="d-flex ms-auto me-3">
-                <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-            </form>
+        <BootstrapNavbar bg="light" expand="lg" className="px-3">
+            <BootstrapNavbar.Brand href="#" className="fw-bold">Shin Wani</BootstrapNavbar.Brand>
+            <Form className="d-flex ms-auto me-3">
+                <FormControl type="search" placeholder="Search" aria-label="Search" className="me-2" />
+            </Form>
             {user && (
                 <Dropdown align="end">
                     <Dropdown.Toggle 
@@ -55,6 +55,6 @@ export default function Navbar({ user }: NavbarProps) {
                     </Dropdown.Menu>
                 </Dropdown>
             )}
-        </nav>
+        </BootstrapNavbar>
     );
 }
