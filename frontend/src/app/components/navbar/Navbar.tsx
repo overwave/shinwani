@@ -5,11 +5,7 @@ import Link from "next/link";
 import {Search} from 'react-bootstrap-icons';
 import {Button, Dropdown, Form, FormControl, Navbar as BootstrapNavbar} from "react-bootstrap";
 import "./Navbar.scss";
-
-interface User {
-    login: string;
-    avatar: string;
-}
+import {User} from "../../services/types";
 
 interface NavbarProps {
     user: User | null;
