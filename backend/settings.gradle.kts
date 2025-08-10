@@ -1,1 +1,1 @@
-rootProject.name = "shinwani-backend"
+rootProject.name = "shinwani"
