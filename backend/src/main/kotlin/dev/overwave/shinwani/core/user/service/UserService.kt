@@ -28,7 +28,6 @@ class UserService(
             User(
                 login = login,
                 hash = passwordEncoder.encode(password),
-                name = "Anonymous",
             ),
         )
     }

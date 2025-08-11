@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface UserRepository : JpaRepository<User, Long> {
     fun findByLogin(login: String): User?
 
-    fun getByLogin(login: String): User// = findByLogin(login) ?: throw UserNotFoundException(login)
+    fun getByLogin(login: String): User
 
     fun existsByLogin(login: String): Boolean
 }

@@ -13,7 +13,7 @@ import java.time.Instant
 open class LongGenAud(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = -1,
+    val id: Long = 0,
     @CreationTimestamp
     @Column(name = "created_at")
     val createdAt: Instant = Instant.now(),
