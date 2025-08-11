@@ -6,7 +6,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "user_")
-class User(
+data class User(
     val login: String,
     var hash: String,
     var wanikaniKey: String? = null,
