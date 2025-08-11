@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { ArrowLeft } from 'react-bootstrap-icons';
 import { useAuth } from '../services/hooks';
+import { apiService } from '../services/api';
 import styles from './Login.module.scss';
 
 type Stage = "Login" | "Registration" | "Password";
@@ -27,13 +28,7 @@ export default function LoginPage() {
             return;
         }
         setSubStage("Loading");
-        fetch(`/api/user/check?login=${login}`)
-            .then<CheckUserResponse>((response) => {
-                if (!response.ok) {
-                    throw new Error("failed to check the login");
-                }
-                return response.json();
-            })
+        apiService.checkUser(login)
             .then(({exists}) => {
                 setLogin(login);
                 setSubStage("Idle");
@@ -49,27 +44,12 @@ export default function LoginPage() {
             return;
         }
         setSubStage("Loading");
-        fetch("/api/user/register", {
-            method: "POST",
-            credentials: 'include',
-            body: JSON.stringify({login, password}),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
+        apiService.registerUser(login, password)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("failed to register");
                 }
-                const formData = new FormData();
-                formData.append('username', login);
-                formData.append('password', password);
-
-                return fetch("/api/user/login", {
-                    method: "POST",
-                    body: formData,
-                    credentials: 'include',
-                });
+                return apiService.loginUser(login, password);
             })
             .then((response) => {
                 if (!response.ok) {
@@ -88,16 +68,7 @@ export default function LoginPage() {
             return;
         }
         setSubStage("Loading");
-        const formData = new FormData();
-        formData.append('username', login);
-        formData.append('password', password);
-        formData.append('remember-me', 'true');
-
-        fetch("/api/user/login", {
-            method: "POST",
-            body: formData,
-            credentials: 'include',
-        })
+        apiService.loginUser(login, password, true)
             .then<AuthenticateResponse>((response) => {
                 if (!response.ok && response.status != 403) {
                     throw new Error("failed to login");
