@@ -11,7 +11,7 @@ class ApiService {
     }
 
     async fetchCounts(): Promise<Counts | null> {
-        return fetcher('/counts');
+        return fetcher('/courses/counts');
     }
 
     async checkUser(login: string): Promise<{ exists: boolean }> {
