@@ -86,18 +86,27 @@ export default function Navbar({user, loading}: NavbarProps) {
         <BootstrapNavbar bg="light" expand="lg" className="px-3">
             <Container>
                 <BootstrapNavbar.Brand href="#" className="fw-bold">ShinWani</BootstrapNavbar.Brand>
-                <Form className="d-flex">
-                    <FormControl
-                        type="search"
-                        placeholder="&#xF52A;"
-                        aria-label="Search"
-                        className="d-none d-md-block"
-                    />
-                    <Button variant="light" className="d-md-none rounded-circle p-2">
-                        <Search className="d-block"/>
-                    </Button>
-                </Form>
-                {getUserSection()}
+
+                <div className="position-absolute start-50 translate-middle-x">
+                    <Form>
+                        <div className="position-relative d-none d-md-block" style={{width: "300px"}}>
+                            <FormControl
+                                type="search"
+                                aria-label="Search"
+                            />
+                            <div className="position-absolute top-50 end-0 translate-middle-y pe-2 pb-1">
+                                <Search/>
+                            </div>
+                        </div>
+                        <Button variant="light" className="d-md-none rounded-circle p-2">
+                            <Search className="d-block"/>
+                        </Button>
+                    </Form>
+                </div>
+
+                <div className="ms-auto">
+                    {getUserSection()}
+                </div>
             </Container>
         </BootstrapNavbar>
     );
