@@ -2,28 +2,52 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import {Search} from 'react-bootstrap-icons';
-import {Button, Dropdown, Form, FormControl, Navbar as BootstrapNavbar} from "react-bootstrap";
+import {BoxArrowRight, Gear, Person, Search} from 'react-bootstrap-icons';
+import {Button, Dropdown, Form, FormControl, Navbar as BootstrapNavbar, Placeholder} from "react-bootstrap";
 import "./Navbar.scss";
+// import styles from './Navbar.scss';
 import {User} from "../../services/types";
+import {apiService} from "../../services/api";
+import {mutate} from "swr";
 
 interface NavbarProps {
-    user: User | null;
+    user: User | undefined;
+    loading: boolean;
 }
 
-export default function Navbar({user}: NavbarProps) {
-    const handleLogout = () => {
-        console.log("logout");
+export default function Navbar({user, loading}: NavbarProps) {
+    const handleLogout = async () => {
+        try {
+            const response = await apiService.logoutUser();
+            if (response.ok) {
+                // Clear SWR cache for all user-related data
+                mutate('/user/me');
+                mutate('/counts');
+                // Redirect to login
+                window.location.href = "/login";
+            }
+        } catch (error) {
+            console.error('Logout failed:', error);
+            // Even if logout fails, clear cache and redirect to login
+            mutate('/user/me');
+            mutate('/counts');
+            window.location.href = "/login";
+        }
     };
 
     const getUserSection = () => {
+        if (loading) {
+            return <Placeholder animation="glow" className="ms-4">
+                <Placeholder style={{width: "40px", height: "40px"}} className="rounded-circle border"/>
+            </Placeholder>
+        }
         if (user) {
             return (
                 <Dropdown align="end" className="ms-4">
                     <Dropdown.Toggle
                         variant="light"
                         id="user-dropdown"
-                        className="p-0 border-0 bg-transparent shadow-none dropdown-toggle-custom"
+                        className="dropdown-toggle-custom"
                     >
                         <Image
                             src={user.avatar}
@@ -35,16 +59,17 @@ export default function Navbar({user}: NavbarProps) {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item as={Link} href="/profile">
-                            <i className="bi bi-person me-2"></i>Profile
-                        </Dropdown.Item>
-                        <Dropdown.Item as={Link} href="/settings">
-                            <i className="bi bi-gear me-2"></i>Settings
-                        </Dropdown.Item>
+                        <h5 className="mx-3 mt-2 mb-3">
+                            {user.login}
+                            <span className="user-level-pill text-bg-wani">{(user.levels ?? {})["wani"] || 42}</span>
+                            <span className="user-level-pill text-bg-bun">{(user.levels ?? {})["bun"] || 73}</span>
+                        </h5>
+
                         <Dropdown.Divider/>
-                        <Dropdown.Item onClick={handleLogout}>
-                            <i className="bi bi-box-arrow-right me-2"></i>Logout
-                        </Dropdown.Item>
+                        <Dropdown.Item as={Link} href="/profile"><Person className="me-2"/>Profile</Dropdown.Item>
+                        <Dropdown.Item as={Link} href="/settings"><Gear className="me-2"/>Settings</Dropdown.Item>
+                        <Dropdown.Divider/>
+                        <Dropdown.Item onClick={handleLogout}><BoxArrowRight className="me-2"/>Logout</Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
             );
@@ -58,9 +83,9 @@ export default function Navbar({user}: NavbarProps) {
     };
 
     return (
-        <BootstrapNavbar bg="light" expand="lg" className="px-3">
+        <BootstrapNavbar bg="light" expand="lg" className="px-3 justify-content-between">
             <BootstrapNavbar.Brand href="#" className="fw-bold">ShinWani</BootstrapNavbar.Brand>
-            <Form className="d-flex ms-auto">
+            <Form className="d-flex">
                 <FormControl
                     type="search"
                     placeholder="Search"

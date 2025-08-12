@@ -1,6 +1,7 @@
 import "./globals.scss";
 import {ReactNode} from "react";
 import {Metadata} from "next";
+import {SWRProvider} from "./providers/SWRProvider";
 
 export const metadata: Metadata = {
     icons: {
@@ -20,7 +21,11 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: { children: ReactNode }) {
     return (
         <html lang="en">
-        <body>{children}</body>
+        <body>
+        <SWRProvider>
+            {children}
+        </SWRProvider>
+        </body>
         </html>
     );
 }

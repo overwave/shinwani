@@ -1,42 +1,26 @@
 import {Counts, User} from './types';
 import { getApiUrl } from './config';
+import { fetcher, postFetcher, formDataFetcher } from './fetcher';
 
 class ApiService {
     private baseUrl = getApiUrl();
 
+    // SWR-compatible data fetching methods
     async fetchUser(): Promise<User | null> {
-        const response = await fetch(`${this.baseUrl}/user`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return await response.json();
+        return fetcher('/user/me');
     }
 
     async fetchCounts(): Promise<Counts | null> {
-        const response = await fetch(`${this.baseUrl}/counts`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return await response.json();
+        return fetcher('/counts');
     }
 
     async checkUser(login: string): Promise<{ exists: boolean }> {
-        const response = await fetch(`${this.baseUrl}/user/check?login=${login}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return await response.json();
+        return fetcher(`/user/check?login=${login}`);
     }
 
+    // Mutation methods (not using SWR)
     async registerUser(login: string, password: string): Promise<Response> {
-        return fetch(`${this.baseUrl}/user/register`, {
-            method: "POST",
-            credentials: 'include',
-            body: JSON.stringify({login, password}),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return postFetcher('/user/register', { login, password });
     }
 
     async loginUser(username: string, password: string, rememberMe: boolean = true): Promise<Response> {
@@ -47,11 +31,11 @@ class ApiService {
             formData.append('remember-me', 'true');
         }
 
-        return fetch(`${this.baseUrl}/user/login`, {
-            method: "POST",
-            body: formData,
-            credentials: 'include',
-        });
+        return formDataFetcher('/user/login', formData);
+    }
+
+    async logoutUser(): Promise<Response> {
+        return postFetcher('/user/logout');
     }
 }
 

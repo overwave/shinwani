@@ -7,18 +7,18 @@ import Reviews from "./components/reviews/Reviews";
 import { useUser, useCounts } from "./services/hooks";
 
 export default function HomePage() {
-    const { user } = useUser();
-    const { counts, loading: countsLoading } = useCounts();
+    const { data: user, isLoading: userLoading } = useUser();
+    const { data: counts, isLoading: countLoading } = useCounts();
 
     return (
         <>
-            <Navbar user={user}/>
+            <Navbar user={user} loading={userLoading}/>
             <Container className="mt-4">
                 <Row className="g-4">
                     <Col md={12}>
                         <div className="p-3">
                             <h3 className="mb-3">WaniKani</h3>
-                            {countsLoading ? (
+                            {countLoading ? (
                                 <div className="text-center py-4">
                                     <Spinner animation="border" role="status"/>
                                 </div>
@@ -37,7 +37,7 @@ export default function HomePage() {
                     <Col md={12}>
                         <div className="p-3">
                             <h3 className="mb-3">Bunpro</h3>
-                            {countsLoading ? (
+                            {countLoading ? (
                                 <div className="text-center py-4">
                                     <Spinner animation="border" role="status"/>
                                 </div>
