@@ -1,4 +1,4 @@
-package dev.overwave.shinwani.core.user.model.dto
+package dev.overwave.shinwani.api.user.dto
 
 enum class LoginStatus {
     SUCCESS,

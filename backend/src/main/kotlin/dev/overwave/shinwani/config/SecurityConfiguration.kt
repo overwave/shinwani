@@ -1,8 +1,8 @@
 package dev.overwave.shinwani.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import dev.overwave.shinwani.core.user.model.dto.LoginDto
-import dev.overwave.shinwani.core.user.model.dto.LoginStatus
+import dev.overwave.shinwani.api.user.dto.LoginDto
+import dev.overwave.shinwani.api.user.dto.LoginStatus
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile

@@ -1,10 +1,10 @@
 package dev.overwave.shinwani.core.user.service
 
+import dev.overwave.shinwani.api.user.dto.CheckUserDto
+import dev.overwave.shinwani.api.user.dto.UserDetailsDto
+import dev.overwave.shinwani.api.user.dto.UserDto
 import dev.overwave.shinwani.core.user.model.User
 import dev.overwave.shinwani.core.user.model.UserExistsException
-import dev.overwave.shinwani.core.user.model.dto.CheckUserDto
-import dev.overwave.shinwani.core.user.model.dto.UserDetailsDto
-import dev.overwave.shinwani.core.user.model.dto.UserDto
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
