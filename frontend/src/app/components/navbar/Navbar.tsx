@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import {BoxArrowRight, Gear, Person, Search} from 'react-bootstrap-icons';
-import {Button, Dropdown, Form, FormControl, Navbar as BootstrapNavbar, Placeholder} from "react-bootstrap";
+import {Button, Container, Dropdown, Form, FormControl, Navbar as BootstrapNavbar, Placeholder} from "react-bootstrap";
 import "./Navbar.scss";
 // import styles from './Navbar.scss';
 import {User} from "../../services/types";
@@ -83,20 +83,22 @@ export default function Navbar({user, loading}: NavbarProps) {
     };
 
     return (
-        <BootstrapNavbar bg="light" expand="lg" className="px-3 justify-content-between">
-            <BootstrapNavbar.Brand href="#" className="fw-bold">ShinWani</BootstrapNavbar.Brand>
-            <Form className="d-flex">
-                <FormControl
-                    type="search"
-                    placeholder="Search"
-                    aria-label="Search"
-                    className="d-none d-md-block"
-                />
-                <Button variant="light" className="d-md-none rounded-circle p-2">
-                    <Search className="d-block"/>
-                </Button>
-            </Form>
-            {getUserSection()}
+        <BootstrapNavbar bg="light" expand="lg" className="px-3">
+            <Container>
+                <BootstrapNavbar.Brand href="#" className="fw-bold">ShinWani</BootstrapNavbar.Brand>
+                <Form className="d-flex">
+                    <FormControl
+                        type="search"
+                        placeholder="&#xF52A;"
+                        aria-label="Search"
+                        className="d-none d-md-block"
+                    />
+                    <Button variant="light" className="d-md-none rounded-circle p-2">
+                        <Search className="d-block"/>
+                    </Button>
+                </Form>
+                {getUserSection()}
+            </Container>
         </BootstrapNavbar>
     );
 }
