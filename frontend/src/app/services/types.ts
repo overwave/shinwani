@@ -19,3 +19,11 @@ export interface CourseCounts {
 export type Counts = {
     [Key in CourseType]?: CourseCounts;
 };
+
+// Generic API response shape (flexible to accommodate different backend responses)
+export interface ApiResponse<T = unknown> {
+    success?: boolean;
+    data?: T;
+    message?: string;
+    error?: string;
+}

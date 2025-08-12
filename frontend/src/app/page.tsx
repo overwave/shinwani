@@ -4,11 +4,12 @@ import {Col, Container, Row, Spinner} from "react-bootstrap";
 import Navbar from "./components/navbar/Navbar";
 import Lessons from "./components/lessons/Lessons";
 import Reviews from "./components/reviews/Reviews";
-import { useUser, useCounts } from "./services/hooks";
+import { useUser, useCourseCounts as useCounts } from "./services";
+import type { Counts } from "./services/types";
 
 export default function HomePage() {
     const { data: user, isLoading: userLoading } = useUser();
-    const { data: counts, isLoading: countLoading } = useCounts();
+    const { data: counts, isLoading: countLoading } = useCounts() as unknown as { data?: Counts; isLoading: boolean };
 
     return (
         <>

@@ -1,12 +1,11 @@
 import {formDataFetcher, postFetcher} from './fetcher';
-import {ApiResponse, User} from '../types';
+import {ApiResponse, User} from './types';
 import {API_ENDPOINTS} from '../constants/api';
 
 class ApiService {
     // User authentication methods (mutations only)
     async registerUser(login: string, password: string): Promise<ApiResponse<User>> {
-        const response = await postFetcher(API_ENDPOINTS.USER.REGISTER, {login, password});
-        return response.json();
+        return postFetcher(API_ENDPOINTS.USER.REGISTER, {login, password});
     }
 
     async loginUser(username: string, password: string, rememberMe: boolean = true): Promise<ApiResponse<User>> {
@@ -17,13 +16,11 @@ class ApiService {
             formData.append('remember-me', 'true');
         }
 
-        const response = await formDataFetcher(API_ENDPOINTS.USER.LOGIN, formData);
-        return response.json();
+        return formDataFetcher(API_ENDPOINTS.USER.LOGIN, formData);
     }
 
     async logoutUser(): Promise<ApiResponse<void>> {
-        const response = await postFetcher(API_ENDPOINTS.USER.LOGOUT);
-        return response.json();
+        return postFetcher(API_ENDPOINTS.USER.LOGOUT);
     }
 }
 

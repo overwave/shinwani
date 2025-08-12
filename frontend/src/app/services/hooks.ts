@@ -1,29 +1,14 @@
 import useSWR from 'swr';
 import { fetcher } from './fetcher';
 import { User, Counts } from './types';
+import { API_ENDPOINTS } from '../constants/api';
 
-// Hook for fetching user data
-export const useUser = () => {
-  return useSWR<User>('/users/me', fetcher);
-};
+export const useUser = () => useSWR<User>(API_ENDPOINTS.USER.ME, fetcher);
+export const useCounts = () => useSWR<Counts>(API_ENDPOINTS.COURSE.COUNTS, fetcher);
 
-// Hook for fetching counts data
-export const useCounts = () => {
-  return useSWR<Counts>('/courses/counts', fetcher);
-};
-
-// Hook for checking if a user exists
-export const useCheckUser = (login: string | null) => {
-  return useSWR<{ exists: boolean }>(
-    login ? `/user/check?login=${login}` : null,
-    fetcher
-  );
-};
-
-// Hook for checking user existence (for login page)
 export const useCheckUserExists = (login: string) => {
   const { data, error, mutate } = useSWR<{ exists: boolean }>(
-    login ? `/user/check?login=${login}` : null,
+    login ? `${API_ENDPOINTS.USER.CHECK}?login=${encodeURIComponent(login)}` : null,
     fetcher
   );
 
@@ -31,6 +16,6 @@ export const useCheckUserExists = (login: string) => {
     exists: data?.exists,
     loading: !error && !data,
     error,
-    mutate
+    mutate,
   };
 };

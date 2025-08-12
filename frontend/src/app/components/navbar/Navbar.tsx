@@ -56,18 +56,18 @@ export default function Navbar({user, loading}: NavbarProps) {
     const handleLogout = async () => {
         try {
             const response = await apiService.logoutUser();
-            if (response.ok) {
+            if ((response as any)?.success ?? true) {
                 // Clear SWR cache for all user-related data
-                mutate('/user/me');
-                mutate('/counts');
+                mutate('/users/me');
+                mutate('/courses/counts');
                 // Redirect to login
                 window.location.href = "/login";
             }
         } catch (error) {
             console.error('Logout failed:', error);
             // Even if logout fails, clear cache and redirect to login
-            mutate('/user/me');
-            mutate('/counts');
+            mutate('/users/me');
+            mutate('/courses/counts');
             window.location.href = "/login";
         }
     };

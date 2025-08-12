@@ -1,13 +1,13 @@
 export const API_ENDPOINTS = {
   USER: {
-    REGISTER: '/user/register',
-    LOGIN: '/user/login',
-    LOGOUT: '/user/logout',
-    CHECK: '/user/check',
-    DETAILS: '/user/details',
+    REGISTER: '/users/register',
+    LOGIN: '/users/login',
+    LOGOUT: '/users/logout',
+    CHECK: '/users/check',
+    ME: '/users/me',
   },
   
   COURSE: {
-    COUNTS: '/course/counts',
+    COUNTS: '/courses/counts',
   },
 } as const;
