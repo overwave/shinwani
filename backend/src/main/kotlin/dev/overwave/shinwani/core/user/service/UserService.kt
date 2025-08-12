@@ -1,9 +1,9 @@
 package dev.overwave.shinwani.core.user.service
 
-import dev.overwave.shinwani.core.user.model.dto.CheckUserDto
+import dev.overwave.shinwani.api.user.dto.CheckUserDto
+import dev.overwave.shinwani.api.user.dto.UserDetailsDto
+import dev.overwave.shinwani.api.user.dto.UserDto
 import dev.overwave.shinwani.core.user.model.User
-import dev.overwave.shinwani.core.user.model.dto.UserDetailsDto
-import dev.overwave.shinwani.core.user.model.dto.UserDto
 import dev.overwave.shinwani.core.user.model.UserExistsException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -32,5 +32,8 @@ class UserService(
         )
     }
 
-    fun selfInfo(login: String): UserDto = UserDto(login = userRepository.getByLogin(login).login)
+    fun selfInfo(login: String): UserDto = UserDto(
+        login = userRepository.getByLogin(login).login,
+        avatar = "https://i.pravatar.cc/150?img=3",
+    )
 }

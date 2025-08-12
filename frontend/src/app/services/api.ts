@@ -1,22 +1,24 @@
-import {Counts, User} from './types';
+import {formDataFetcher, postFetcher} from './fetcher';
 
 class ApiService {
-    private baseUrl = '/api';
-
-    async fetchUser(): Promise<User | null> {
-        const response = await fetch(`${this.baseUrl}/user`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return await response.json();
+    // Mutation methods (not using SWR)
+    async registerUser(login: string, password: string): Promise<Response> {
+        return postFetcher('/user/register', {login, password});
     }
 
-    async fetchCounts(): Promise<Counts | null> {
-        const response = await fetch(`${this.baseUrl}/counts`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+    async loginUser(username: string, password: string, rememberMe: boolean = true): Promise<Response> {
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('password', password);
+        if (rememberMe) {
+            formData.append('remember-me', 'true');
         }
-        return await response.json();
+
+        return formDataFetcher('/user/login', formData);
+    }
+
+    async logoutUser(): Promise<Response> {
+        return postFetcher('/user/logout');
     }
 }
 

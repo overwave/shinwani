@@ -1,8 +1,9 @@
 'use client'
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { ArrowLeft } from 'react-bootstrap-icons';
-import { useAuth } from '../services/hooks';
+import { apiService } from '../services/api';
+import { useCheckUserExists } from '../services/hooks';
 import styles from './Login.module.scss';
 
 type Stage = "Login" | "Registration" | "Password";
@@ -10,38 +11,44 @@ type LoginStage = "Idle" | "Loading" | "Next" | "ServerError" | "EmptyLoginError
 type RegistrationStage = "Idle" | "Loading" | "ServerError" | "EmptyPasswordError";
 type PasswordStage = "Idle" | "Loading" | "ServerError" | "WrongPasswordError" | "EmptyPasswordError";
 
-type CheckUserResponse = { exists: boolean }
 type AuthenticateResponse = { result: "SUCCESS" | "FAILED" }
 
 export default function LoginPage() {
     const [login, setLogin] = useState("");
     const [input, setInput] = useState("");
-    const { login: authLogin } = useAuth();
 
     const [stage, setStage] = useState<Stage>("Login");
     const [subStage, setSubStage] = useState<LoginStage | RegistrationStage | PasswordStage>("Idle");
 
-    const handleLoginInput = (login: string) => {
-        if (!login) {
+    // Use SWR hook for checking user existence
+    const { exists, loading: checkLoading, error: checkError } = useCheckUserExists(login);
+
+    // Handle user existence check result
+    useEffect(() => {
+        if (login && exists !== undefined) {
+            setSubStage("Idle");
+            exists ? setStage("Password") : setStage("Registration");
+            setInput("");
+        }
+    }, [login, exists]);
+
+    const handleLoginInput = (loginInput: string) => {
+        if (!loginInput) {
             setSubStage("EmptyLoginError");
             return;
         }
         setSubStage("Loading");
-        fetch(`/api/user/check?login=${login}`)
-            .then<CheckUserResponse>((response) => {
-                if (!response.ok) {
-                    throw new Error("failed to check the login");
-                }
-                return response.json();
-            })
-            .then(({exists}) => {
-                setLogin(login);
-                setSubStage("Idle");
-                exists ? setStage("Password") : setStage("Registration");
-                setInput("");
-            })
-            .catch(() => setSubStage("ServerError"));
+        setLogin(loginInput);
     }
+
+    // Update loading state based on SWR
+    useEffect(() => {
+        if (checkLoading) {
+            setSubStage("Loading");
+        } else if (checkError) {
+            setSubStage("ServerError");
+        }
+    }, [checkLoading, checkError]);
 
     const handleRegistrationInput = (password: string) => {
         if (!password) {
@@ -49,34 +56,18 @@ export default function LoginPage() {
             return;
         }
         setSubStage("Loading");
-        fetch("/api/user/register", {
-            method: "POST",
-            credentials: 'include',
-            body: JSON.stringify({login, password}),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
+        apiService.registerUser(login, password)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("failed to register");
                 }
-                const formData = new FormData();
-                formData.append('username', login);
-                formData.append('password', password);
-
-                return fetch("/api/user/login", {
-                    method: "POST",
-                    body: formData,
-                    credentials: 'include',
-                });
+                return apiService.loginUser(login, password);
             })
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("failed to login");
                 }
-                // Set logged in state and redirect
-                authLogin("registered");
+                // Redirect to home page - SWR will automatically fetch user data
                 window.location.href = "/";
             })
             .catch(() => setSubStage("ServerError"));
@@ -88,16 +79,7 @@ export default function LoginPage() {
             return;
         }
         setSubStage("Loading");
-        const formData = new FormData();
-        formData.append('username', login);
-        formData.append('password', password);
-        formData.append('remember-me', 'true');
-
-        fetch("/api/user/login", {
-            method: "POST",
-            body: formData,
-            credentials: 'include',
-        })
+        apiService.loginUser(login, password, true)
             .then<AuthenticateResponse>((response) => {
                 if (!response.ok && response.status != 403) {
                     throw new Error("failed to login");
@@ -106,8 +88,7 @@ export default function LoginPage() {
             })
             .then(({result}) => {
                 if (result == "SUCCESS") {
-                    // Set logged in state and redirect
-                    authLogin("authenticated");
+                    // Redirect to home page - SWR will automatically fetch user data
                     window.location.href = "/";
                 } else {
                     setSubStage("WrongPasswordError");

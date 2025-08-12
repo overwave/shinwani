@@ -1,8 +1,9 @@
-package dev.overwave.shinwani.core.user.service
+package dev.overwave.shinwani.api.user
 
-import dev.overwave.shinwani.core.user.model.dto.CheckUserDto
-import dev.overwave.shinwani.core.user.model.dto.RegisterUserRequestDto
-import dev.overwave.shinwani.core.user.model.dto.UserDto
+import dev.overwave.shinwani.api.user.dto.CheckUserDto
+import dev.overwave.shinwani.api.user.dto.RegisterUserRequestDto
+import dev.overwave.shinwani.api.user.dto.UserDto
+import dev.overwave.shinwani.core.user.service.UserService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
 
 @RestController
-@RequestMapping(path = ["/api/user"], produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping(path = ["/api/users"], produces = [MediaType.APPLICATION_JSON_VALUE])
 class UserController(
     private val userService: UserService,
 ) {

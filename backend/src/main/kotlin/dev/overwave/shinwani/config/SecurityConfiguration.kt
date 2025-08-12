@@ -1,8 +1,8 @@
 package dev.overwave.shinwani.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import dev.overwave.shinwani.core.user.model.dto.LoginDto
-import dev.overwave.shinwani.core.user.model.dto.LoginStatus
+import dev.overwave.shinwani.api.user.dto.LoginDto
+import dev.overwave.shinwani.api.user.dto.LoginStatus
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -38,12 +38,12 @@ class SecurityConfiguration(
         http
             .authorizeHttpRequests {
                 it
-                    .requestMatchers("/api/user/me")
+                    .requestMatchers("/api/users/me")
                     .authenticated()
                 it.anyRequest().permitAll()
             }.formLogin {
                 it.loginPage("/login")
-                it.loginProcessingUrl("/api/user/login")
+                it.loginProcessingUrl("/api/users/login")
                 it.successHandler { _, response, _ ->
                     response.writer.write(objectMapper.writeValueAsString(LoginDto(LoginStatus.SUCCESS)))
                 }
@@ -54,7 +54,7 @@ class SecurityConfiguration(
                 it.permitAll()
             }.cors {
             }.logout {
-                it.logoutUrl("/api/user/logout")
+                it.logoutUrl("/api/users/logout")
                 it.deleteCookies("JSESSIONID")
                 it.permitAll()
             }.csrf {

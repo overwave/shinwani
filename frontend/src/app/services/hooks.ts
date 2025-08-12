@@ -1,66 +1,36 @@
-import { useState, useEffect } from 'react';
+import useSWR from 'swr';
+import { fetcher } from './fetcher';
 import { User, Counts } from './types';
-import { apiService } from './api';
 
-// Authentication utilities
-export function useAuth() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [loading, setLoading] = useState(true);
+// Hook for fetching user data
+export const useUser = () => {
+  return useSWR<User>('/users/me', fetcher);
+};
 
-    useEffect(() => {
-        // Check if user is logged in from localStorage or session
-        const checkAuth = () => {
-            const token = localStorage.getItem('authToken');
-            setIsLoggedIn(!!token);
-            setLoading(false);
-        };
-        
-        checkAuth();
-    }, []);
+// Hook for fetching counts data
+export const useCounts = () => {
+  return useSWR<Counts>('/courses/counts', fetcher);
+};
 
-    const login = (token: string) => {
-        localStorage.setItem('authToken', token);
-        setIsLoggedIn(true);
-    };
+// Hook for checking if a user exists
+export const useCheckUser = (login: string | null) => {
+  return useSWR<{ exists: boolean }>(
+    login ? `/user/check?login=${login}` : null,
+    fetcher
+  );
+};
 
-    const logout = () => {
-        localStorage.removeItem('authToken');
-        setIsLoggedIn(false);
-    };
+// Hook for checking user existence (for login page)
+export const useCheckUserExists = (login: string) => {
+  const { data, error, mutate } = useSWR<{ exists: boolean }>(
+    login ? `/user/check?login=${login}` : null,
+    fetcher
+  );
 
-    return { isLoggedIn, loading, login, logout };
-}
-
-export function useUser() {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        async function fetchUser() {
-            const userData = await apiService.fetchUser();
-            setUser(userData);
-            setLoading(false);
-        }
-
-        fetchUser();
-    }, []);
-
-    return { user, loading };
-}
-
-export function useCounts() {
-    const [counts, setCounts] = useState<Counts | null>(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        async function fetchCounts() {
-            const countsData = await apiService.fetchCounts();
-            setCounts(countsData);
-            setLoading(false);
-        }
-
-        fetchCounts();
-    }, []);
-
-    return { counts, loading };
-}
+  return {
+    exists: data?.exists,
+    loading: !error && !data,
+    error,
+    mutate
+  };
+};

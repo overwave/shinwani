@@ -1,6 +1,11 @@
 export interface User {
     login: string;
     avatar: string;
+    levels: UserLevels | undefined;
+}
+
+export type UserLevels = {
+    [Key in CourseType]?: number
 }
 
 export type CourseType = "wani" | "bun";

@@ -1,29 +1,40 @@
-@import "../../../../node_modules/bootstrap/scss/bootstrap";
-
-.navbar-user-badge {
-  @extend .badge;
-  @extend .bg-secondary-subtle;
-  @extend .text-primary;
-  @extend .position-absolute;
-  @extend .top-100;
-  @extend .start-50;
-  @extend .translate-middle;
-  @extend .rounded-pill;
-  @extend .px-2;
-}
+@use "../../../../node_modules/bootstrap/scss/bootstrap";
 
 .dropdown-toggle-custom {
+  @extend .p-0;
+  @extend .border-0;
+  @extend .bg-transparent;
+  @extend .shadow-none;
+
   &:focus {
     box-shadow: none !important;
   }
-  
+
   &:hover {
     transform: scale(1.05);
     transition: transform 0.2s ease;
   }
-  
+
   // Remove the default dropdown arrow since we're using an image
   &::after {
     display: none !important;
+  }
+}
+
+.user-level-pill {
+  @extend .badge;
+  @extend .rounded-pill;
+  @extend .d-inline;
+  @extend .ms-1;
+  @extend .lh-sm;
+
+  &.text-bg-wani {
+    color: white;
+    background-color: #f0a;
+  }
+
+  &.text-bg-bun {
+    color: white;
+    background-color: #e8585d;
   }
 }
