@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
 
 @RestController
-@RequestMapping(path = ["/api/user"], produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping(path = ["/api/users"], produces = [MediaType.APPLICATION_JSON_VALUE])
 class UserController(
     private val userService: UserService,
 ) {

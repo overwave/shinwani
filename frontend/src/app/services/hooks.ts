@@ -4,12 +4,12 @@ import { User, Counts } from './types';
 
 // Hook for fetching user data
 export const useUser = () => {
-  return useSWR<User>('/user/me', fetcher);
+  return useSWR<User>('/users/me', fetcher);
 };
 
 // Hook for fetching counts data
 export const useCounts = () => {
-  return useSWR<Counts>('/counts', fetcher);
+  return useSWR<Counts>('/courses/counts', fetcher);
 };
 
 // Hook for checking if a user exists
