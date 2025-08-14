@@ -8,12 +8,11 @@ import { useUser, useCourseCounts as useCounts } from "./services";
 import type { Counts } from "./services/types";
 
 export default function HomePage() {
-    const { data: user, isLoading: userLoading } = useUser();
     const { data: counts, isLoading: countLoading } = useCounts() as unknown as { data?: Counts; isLoading: boolean };
 
     return (
         <>
-            <Navbar user={user} loading={userLoading}/>
+            <Navbar/>
             <Container className="mt-4">
                 <Row className="g-4">
                     <Col md={12}>

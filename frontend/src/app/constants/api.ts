@@ -5,6 +5,7 @@ export const API_ENDPOINTS = {
     LOGOUT: '/users/logout',
     CHECK: '/users/check',
     ME: '/users/me',
+    SETTINGS: '/users/settings',
   },
   
   COURSE: {

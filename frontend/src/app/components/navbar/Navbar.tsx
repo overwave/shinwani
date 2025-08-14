@@ -5,19 +5,14 @@ import Link from "next/link";
 import {BoxArrowRight, Gear, Person, Search, X} from 'react-bootstrap-icons';
 import {Button, Container, Dropdown, Form, FormControl, Modal, Navbar as BootstrapNavbar, Placeholder} from "react-bootstrap";
 import "./Navbar.scss";
-// import styles from './Navbar.scss';
-import {User} from "../../services/types";
 import {apiService} from "../../services/api";
 import {mutate} from "swr";
 import {useState, useCallback} from "react";
 import useSWR from "swr";
+import {useUser} from "@/app/hooks/useApi";
 
-interface NavbarProps {
-    user: User | undefined;
-    loading: boolean;
-}
-
-export default function Navbar({user, loading}: NavbarProps) {
+export default function Navbar() {
+    const { data: user, isLoading: userLoading } = useUser();
     const [showSearchModal, setShowSearchModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     
@@ -73,7 +68,7 @@ export default function Navbar({user, loading}: NavbarProps) {
     };
 
     const getUserSection = () => {
-        if (loading) {
+        if (userLoading) {
             return <Placeholder animation="glow" className="ms-4">
                 <Placeholder style={{width: "40px", height: "40px"}} className="rounded-circle border"/>
             </Placeholder>

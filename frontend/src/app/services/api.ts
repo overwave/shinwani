@@ -1,5 +1,5 @@
-import {formDataFetcher, postFetcher} from './fetcher';
-import {ApiResponse, User} from './types';
+import {formDataFetcher, postFetcher, fetcher} from './fetcher';
+import {ApiResponse, User, UserSettings} from './types';
 import {API_ENDPOINTS} from '../constants/api';
 
 class ApiService {
@@ -21,6 +21,10 @@ class ApiService {
 
     async logoutUser(): Promise<ApiResponse<void>> {
         return postFetcher(API_ENDPOINTS.USER.LOGOUT);
+    }
+
+    async getUserSettings(): Promise<ApiResponse<UserSettings>> {
+        return fetcher(API_ENDPOINTS.USER.SETTINGS);
     }
 }
 

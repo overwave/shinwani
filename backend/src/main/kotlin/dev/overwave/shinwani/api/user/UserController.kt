@@ -3,6 +3,7 @@ package dev.overwave.shinwani.api.user
 import dev.overwave.shinwani.api.user.dto.CheckUserDto
 import dev.overwave.shinwani.api.user.dto.RegisterUserRequestDto
 import dev.overwave.shinwani.api.user.dto.UserDto
+import dev.overwave.shinwani.api.user.dto.UserSettingsDto
 import dev.overwave.shinwani.core.user.service.UserService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,4 +31,13 @@ class UserController(
 
     @GetMapping("/me")
     fun selfInfo(principal: Principal): UserDto = userService.selfInfo(principal.name)
+
+    @GetMapping("/settings")
+    fun getUserSettings(): UserSettingsDto {
+        // Hardcoded values for now as requested
+        return UserSettingsDto(
+            wanikaniApiToken = "wk_1234567890abcdef",
+            bunproEmail = "user@example.com"
+        )
+    }
 }

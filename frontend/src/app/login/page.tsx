@@ -2,7 +2,7 @@
 
 import { FormEvent, useState, useEffect } from "react";
 import { ArrowLeft } from 'react-bootstrap-icons';
-import { apiService } from '../services/api';
+import { apiService } from '@/app/services';
 import { useCheckUserExists } from '../services/hooks';
 import styles from './Login.module.scss';
 
