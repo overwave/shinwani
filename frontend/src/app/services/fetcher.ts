@@ -46,7 +46,7 @@ export const postFetcher = async (url: string, data?: any, options?: RequestInit
     throw new Error(`HTTP error! status: ${response.status}`);
   }
   
-  return response;
+  return response.json();
 };
 
 export const formDataFetcher = async (url: string, formData: FormData, options?: RequestInit) => {
@@ -68,5 +68,5 @@ export const formDataFetcher = async (url: string, formData: FormData, options?:
     throw new Error(`HTTP error! status: ${response.status}`);
   }
   
-  return response;
+  return response.json();
 };

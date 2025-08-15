@@ -13,18 +13,14 @@ interface ComponentProps {
 
 export default function Reviews({reviews, heap, type}: ComponentProps) {
     return (
-        <Card
-            className={`h-100 text-center p-3 shadow position-relative ${
-                reviews ? "" : "bg-light text-muted"
-            }`}
-        >
+        <Card className={"h-100 text-center p-3 shadow " + (reviews ? "" : "bg-light text-muted")}>
             <Row className="g-0">
                 <Col md={4}>
                     {reviews ?
                         <Image src={`/${type}/reviews.png`} alt="Reviews" width={160} height={160}
-                               className="mx-auto"/> :
+                               className="img-fluid"/> :
                         <Image src={`/${type}/reviews_done.png`} alt="Reviews" width={160} height={160}
-                               className="mx-auto"/>}
+                               className="img-fluid"/>}
                 </Col>
                 <Col md={8}>
                     <Card.Body>

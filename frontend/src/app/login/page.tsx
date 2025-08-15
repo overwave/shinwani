@@ -2,7 +2,7 @@
 
 import { FormEvent, useState, useEffect } from "react";
 import { ArrowLeft } from 'react-bootstrap-icons';
-import { apiService } from '../services/api';
+import { apiService } from '@/app/services';
 import { useCheckUserExists } from '../services/hooks';
 import styles from './Login.module.scss';
 
@@ -57,19 +57,8 @@ export default function LoginPage() {
         }
         setSubStage("Loading");
         apiService.registerUser(login, password)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("failed to register");
-                }
-                return apiService.loginUser(login, password);
-            })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("failed to login");
-                }
-                // Redirect to home page - SWR will automatically fetch user data
-                window.location.href = "/";
-            })
+            .then(() => apiService.loginUser(login, password))
+            .then(() => { window.location.href = "/"; })
             .catch(() => setSubStage("ServerError"));
     }
 
@@ -80,13 +69,7 @@ export default function LoginPage() {
         }
         setSubStage("Loading");
         apiService.loginUser(login, password, true)
-            .then<AuthenticateResponse>((response) => {
-                if (!response.ok && response.status != 403) {
-                    throw new Error("failed to login");
-                }
-                return response.json();
-            })
-            .then(({result}) => {
+            .then(({result}: AuthenticateResponse) => {
                 if (result == "SUCCESS") {
                     // Redirect to home page - SWR will automatically fetch user data
                     window.location.href = "/";

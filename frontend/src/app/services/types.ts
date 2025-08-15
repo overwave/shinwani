@@ -19,3 +19,17 @@ export interface CourseCounts {
 export type Counts = {
     [Key in CourseType]?: CourseCounts;
 };
+
+export interface UserSettings {
+    wanikaniApiToken?: string;
+    bunproEmail?: string;
+    bunproPassword?: string;
+}
+
+// Generic API response shape (flexible to accommodate different backend responses)
+export interface ApiResponse<T = unknown> {
+    success?: boolean;
+    data?: T;
+    message?: string;
+    error?: string;
+}
