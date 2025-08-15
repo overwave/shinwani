@@ -16,7 +16,6 @@ class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
 ) : UserDetailsService {
-    private val passwordStub = "*".repeat(8)
 
     override fun loadUserByUsername(login: String): UserDetails {
         val user = userRepository.getByLogin(login)
@@ -42,10 +41,32 @@ class UserService(
 
     fun getUserSettings(login: String): UserSettingsDto {
         val user = userRepository.getByLogin(login)
-        return UserSettingsDto(
-            wanikaniApiToken = user.wanikaniKey,
-            bunproEmail = user.bunproEmail,
-            bunproPassword = user.bunproPassword?.let { passwordStub }
-        )
+        return UserSettingsDto(wanikaniApiToken = user.wanikaniKey, bunproEmail = user.bunproEmail)
+    }
+
+    fun updateWanikaniSettings(login: String, apiToken: String) {
+        val user = userRepository.getByLogin(login)
+        user.wanikaniKey = apiToken
+        userRepository.save(user)
+    }
+
+    fun updateBunproSettings(login: String, email: String, password: String) {
+        val user = userRepository.getByLogin(login)
+        user.bunproEmail = email
+        user.bunproPassword = password
+        userRepository.save(user)
+    }
+
+    fun deleteWanikaniSettings(login: String) {
+        val user = userRepository.getByLogin(login)
+        user.wanikaniKey = null
+        userRepository.save(user)
+    }
+
+    fun deleteBunproSettings(login: String) {
+        val user = userRepository.getByLogin(login)
+        user.bunproEmail = null
+        user.bunproPassword = null
+        userRepository.save(user)
     }
 }

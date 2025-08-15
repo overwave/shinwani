@@ -5,6 +5,7 @@ import {Button, Col, Container, FloatingLabel, Form, InputGroup, Row, Spinner} f
 import {useSettings} from '../services/hooks';
 import Navbar from "@/app/components/navbar/Navbar";
 import {CheckLg, Trash} from "react-bootstrap-icons";
+import {apiService} from '../services/api';
 
 export default function SettingsPage() {
     const {data, error, isLoading, mutate} = useSettings();
@@ -17,35 +18,46 @@ export default function SettingsPage() {
         if (data) {
             setWanikaniToken(data.wanikaniApiToken);
             setBunproEmail(data.bunproEmail);
-            setBunproPassword(data.bunproPassword);
         }
     }, [data]);
 
     const handleWanikaniSave = async () => {
-        // TODO: Implement actual save to backend
-        await mutate({
-            wanikaniApiToken: wanikaniToken,
-            bunproEmail: data?.bunproEmail,
-            bunproPassword: data?.bunproPassword
-        }, false);
+        try {
+            await apiService.updateWanikaniSettings(wanikaniToken!);
+            await mutate();
+        } catch (error) {
+            console.error('Failed to save WaniKani settings:', error);
+        }
     };
 
     const handleBunproSave = async () => {
-        // TODO: Implement actual save to backend
-        await mutate({
-            wanikaniApiToken: data?.wanikaniApiToken,
-            bunproEmail: bunproEmail,
-            bunproPassword: bunproPassword
-        }, false);
+        try {
+            await apiService.updateBunproSettings(bunproEmail!, bunproPassword!);
+            await mutate();
+        } catch (error) {
+            console.error('Failed to save Bunpro settings:', error);
+        }
     };
 
-    const handleWanikaniDelete = () => {
-        setWanikaniToken('');
+    const handleWanikaniDelete = async () => {
+        try {
+            await apiService.deleteWanikaniSettings();
+            setWanikaniToken('');
+            await mutate();
+        } catch (error) {
+            console.error('Failed to delete WaniKani settings:', error);
+        }
     };
 
-    const handleBunproDelete = () => {
-        setBunproEmail('');
-        setBunproPassword('');
+    const handleBunproDelete = async () => {
+        try {
+            await apiService.deleteBunproSettings();
+            setBunproEmail('');
+            setBunproPassword('');
+            await mutate();
+        } catch (error) {
+            console.error('Failed to delete Bunpro settings:', error);
+        }
     };
 
     if (isLoading) {
@@ -108,7 +120,7 @@ export default function SettingsPage() {
                                     onChange={(e) => setBunproPassword(e.target.value)}
                                 />
                             </FloatingLabel>
-                            {bunproEmail && bunproPassword && (
+                            {bunproEmail && (
                                 <Button variant="outline-danger" onClick={handleBunproDelete}>
                                     <Trash className="m-2"></Trash>
                                 </Button>

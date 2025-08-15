@@ -6,6 +6,10 @@ export const API_ENDPOINTS = {
     CHECK: '/users/check',
     ME: '/users/me',
     SETTINGS: '/users/settings',
+    UPDATE_WANIKANI: '/users/settings/wanikani',
+    UPDATE_BUNPRO: '/users/settings/bunpro',
+    DELETE_WANIKANI: '/users/settings/wanikani',
+    DELETE_BUNPRO: '/users/settings/bunpro',
   },
   
   COURSE: {

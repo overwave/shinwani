@@ -16,7 +16,7 @@ private const val IV_LENGTH = 12
 
 @Service
 class CipherService(
-    @Value("courses.bunpro.credentials-key:test") bunproCredentialsKey: String,
+    @Value("\${courses.bunpro.credentials-key}") bunproCredentialsKey: String,
 ) {
     private val key: SecretKey
     private val random = SecureRandom()

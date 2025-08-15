@@ -6,7 +6,7 @@ import jakarta.persistence.Converter
 
 @Converter(autoApply = false)
 class AesGcmStringConverter : AttributeConverter<String?, String?> {
-    private val cipherService = SpringContext.getBean<CipherService>()
+    private val cipherService by lazy { SpringContext.getBean<CipherService>() }
 
     override fun convertToDatabaseColumn(attribute: String?): String? =
         attribute?.let { cipherService.encrypt(it) }
