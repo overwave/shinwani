@@ -1,12 +1,10 @@
-import {formDataFetcher, postFetcher, fetcher} from './fetcher';
-import {ApiResponse, User, UserSettings} from './types';
+import {deleteFetcher, formDataFetcher, postFetcher, putFetcher} from './fetcher';
+import {ApiResponse, User} from './types';
 import {API_ENDPOINTS} from '../constants/api';
 
 class ApiService {
-    // User authentication methods (mutations only)
-    async registerUser(login: string, password: string): Promise<ApiResponse<User>> {
-        return postFetcher(API_ENDPOINTS.USER.REGISTER, {login, password});
-    }
+    registerUser = async (login: string, password: string): Promise<ApiResponse<User>> =>
+        postFetcher(API_ENDPOINTS.USER.REGISTER, {login, password});
 
     async loginUser(username: string, password: string, rememberMe: boolean = true): Promise<ApiResponse<User>> {
         const formData = new FormData();
@@ -19,13 +17,17 @@ class ApiService {
         return formDataFetcher(API_ENDPOINTS.USER.LOGIN, formData);
     }
 
-    async logoutUser(): Promise<ApiResponse<void>> {
-        return postFetcher(API_ENDPOINTS.USER.LOGOUT);
-    }
+    logoutUser = async (): Promise<ApiResponse<void>> => postFetcher(API_ENDPOINTS.USER.LOGOUT);
 
-    async getUserSettings(): Promise<ApiResponse<UserSettings>> {
-        return fetcher(API_ENDPOINTS.USER.SETTINGS);
-    }
+    updateWanikaniSettings = async (apiToken: string): Promise<void> =>
+        putFetcher(API_ENDPOINTS.USER.UPDATE_WANIKANI, {apiToken});
+
+    updateBunproSettings = async (email: string, password: string): Promise<void> =>
+        putFetcher(API_ENDPOINTS.USER.UPDATE_BUNPRO, {email, password});
+
+    deleteWanikaniSettings = async (): Promise<void> => deleteFetcher(API_ENDPOINTS.USER.DELETE_WANIKANI);
+
+    deleteBunproSettings = async (): Promise<void> => deleteFetcher(API_ENDPOINTS.USER.DELETE_BUNPRO);
 }
 
 export const apiService = new ApiService();

@@ -23,7 +23,6 @@ export type Counts = {
 export interface UserSettings {
     wanikaniApiToken?: string;
     bunproEmail?: string;
-    bunproPassword?: string;
 }
 
 // Generic API response shape (flexible to accommodate different backend responses)
