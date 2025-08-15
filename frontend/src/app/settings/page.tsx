@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react';
 import {Button, Col, Container, FloatingLabel, Form, InputGroup, Row, Spinner} from 'react-bootstrap';
 import {useSettings} from '../services/hooks';
 import Navbar from "@/app/components/navbar/Navbar";
+import {CheckLg, Trash} from "react-bootstrap-icons";
 
 export default function SettingsPage() {
     const {data, error, isLoading, mutate} = useSettings();
@@ -38,6 +39,15 @@ export default function SettingsPage() {
         }, false);
     };
 
+    const handleWanikaniDelete = () => {
+        setWanikaniToken('');
+    };
+
+    const handleBunproDelete = () => {
+        setBunproEmail('');
+        setBunproPassword('');
+    };
+
     if (isLoading) {
         return (
             <>
@@ -69,7 +79,14 @@ export default function SettingsPage() {
                                         onChange={(e) => setWanikaniToken(e.target.value)}
                                     />
                                 </FloatingLabel>
-                                <Button variant="primary" onClick={handleWanikaniSave}>Save</Button>
+                                {wanikaniToken && (
+                                    <Button variant="outline-danger" onClick={handleWanikaniDelete}>
+                                        <Trash className="m-2"></Trash>
+                                    </Button>
+                                )}
+                                <Button variant="success" onClick={handleWanikaniSave} disabled={!wanikaniToken}>
+                                    <CheckLg className="m-2"></CheckLg>
+                                </Button>
                             </InputGroup>
                         </Form.Group>
 
@@ -91,7 +108,15 @@ export default function SettingsPage() {
                                     onChange={(e) => setBunproPassword(e.target.value)}
                                 />
                             </FloatingLabel>
-                            <Button variant="primary" onClick={handleBunproSave}>Save</Button>
+                            {bunproEmail && bunproPassword && (
+                                <Button variant="outline-danger" onClick={handleBunproDelete}>
+                                    <Trash className="m-2"></Trash>
+                                </Button>
+                            )}
+                            <Button variant="success" onClick={handleBunproSave}
+                                    disabled={!bunproEmail || !bunproPassword}>
+                                <CheckLg className="m-2"></CheckLg>
+                            </Button>
                         </InputGroup>
                         <Form.Text className="text-muted">Password need to be re-entered on e-mail update.</Form.Text>
                     </Col>

@@ -10,5 +10,6 @@ data class User(
     val login: String,
     var hash: String,
     var wanikaniKey: String? = null,
-    var bunproKey: String? = null,
+    var bunproEmail: String? = null,
+    var bunproPassword: String? = null,
 ) : LongGenAud()

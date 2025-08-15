@@ -11,3 +11,9 @@ CREATE TABLE IF NOT EXISTS user_
     created_at   TIMESTAMPTZ NOT NULL,
     updated_at   TIMESTAMPTZ NOT NULL
 );
+
+--changeset overwave:added_bunpro_credentials
+ALTER TABLE IF EXISTS user_
+    RENAME COLUMN bunpro_key TO bunpro_email;
+ALTER TABLE IF EXISTS user_
+    ADD COLUMN IF NOT EXISTS bunpro_password TEXT;

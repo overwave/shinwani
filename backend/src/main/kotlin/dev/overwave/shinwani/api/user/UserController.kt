@@ -33,11 +33,5 @@ class UserController(
     fun selfInfo(principal: Principal): UserDto = userService.selfInfo(principal.name)
 
     @GetMapping("/settings")
-    fun getUserSettings(): UserSettingsDto {
-        // Hardcoded values for now as requested
-        return UserSettingsDto(
-            wanikaniApiToken = "wk_1234567890abcdef",
-            bunproEmail = "user@example.com"
-        )
-    }
+    fun getUserSettings(principal: Principal): UserSettingsDto = userService.getUserSettings(principal.name)
 }

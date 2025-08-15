@@ -3,6 +3,7 @@ package dev.overwave.shinwani.core.user.service
 import dev.overwave.shinwani.api.user.dto.CheckUserDto
 import dev.overwave.shinwani.api.user.dto.UserDetailsDto
 import dev.overwave.shinwani.api.user.dto.UserDto
+import dev.overwave.shinwani.api.user.dto.UserSettingsDto
 import dev.overwave.shinwani.core.user.model.User
 import dev.overwave.shinwani.core.user.model.UserExistsException
 import org.springframework.security.core.userdetails.UserDetails
@@ -15,6 +16,8 @@ class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
 ) : UserDetailsService {
+    private val passwordStub = "*".repeat(8)
+
     override fun loadUserByUsername(login: String): UserDetails {
         val user = userRepository.getByLogin(login)
         return UserDetailsDto(user.login, user.hash, authorities = listOf())
@@ -36,4 +39,13 @@ class UserService(
         login = userRepository.getByLogin(login).login,
         avatar = "https://i.pravatar.cc/150?img=3",
     )
+
+    fun getUserSettings(login: String): UserSettingsDto {
+        val user = userRepository.getByLogin(login)
+        return UserSettingsDto(
+            wanikaniApiToken = user.wanikaniKey,
+            bunproEmail = user.bunproEmail,
+            bunproPassword = user.bunproPassword?.let { passwordStub }
+        )
+    }
 }
