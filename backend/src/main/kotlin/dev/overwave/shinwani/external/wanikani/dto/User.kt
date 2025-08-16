@@ -9,6 +9,6 @@ data class User(
     val profileUrl: String,
     val startedAt: Instant,
     val currentVacationStartedAt: Instant?,
-    val subscription: WaniKaniSubscription,
-    val preferences: WaniKaniPreferences
+    val subscription: Subscription,
+    val preferences: Preferences,
 )

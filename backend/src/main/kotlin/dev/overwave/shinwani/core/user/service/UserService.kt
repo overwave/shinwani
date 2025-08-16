@@ -7,7 +7,7 @@ import dev.overwave.shinwani.api.user.dto.UserDetailsDto
 import dev.overwave.shinwani.api.user.dto.UserDto
 import dev.overwave.shinwani.core.user.model.User
 import dev.overwave.shinwani.core.user.model.UserExistsException
-import dev.overwave.shinwani.external.wanikani.WaniKaniService
+import dev.overwave.shinwani.external.wanikani.WanikaniService
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service
 class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val waniKaniService: WaniKaniService,
+    private val waniKaniService: WanikaniService,
 ) : UserDetailsService {
 
     override fun loadUserByUsername(login: String): UserDetails {

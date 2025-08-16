@@ -20,7 +20,7 @@ import java.security.Principal
 class SettingsController(
     private val userService: UserService,
 ) {
-    @GetMapping()
+    @GetMapping
     fun getUserSettings(principal: Principal): UserSettingsDto = userService.getUserSettings(principal.name)
 
     @PutMapping("/wanikani")

@@ -5,18 +5,20 @@ import dev.overwave.shinwani.external.wanikani.dto.ResponseObject
 import dev.overwave.shinwani.external.wanikani.dto.SummaryResponse
 import dev.overwave.shinwani.external.wanikani.dto.User
 import dev.overwave.shinwani.external.wanikani.dto.UserResponse
+import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.getForObject
+import org.springframework.web.client.exchange
 
 private const val BASE_URL = "https://api.wanikani.com/v2"
 private const val USER_PATH = "user"
 private const val SUMMARY_PATH = "summary"
 
 @Service
-class WaniKaniService(
+class WanikaniService(
     private val restTemplate: RestTemplate,
 ) {
     fun checkUserByApiToken(apiToken: String): User? =
@@ -36,18 +38,20 @@ class WaniKaniService(
     }
 
     private inline fun <reified T : ResponseObject> makeWaniKaniRequest(path: String, apiKey: String): T {
-        val headers = createWaniKaniHeaders(apiKey)
+        val requestEntity = HttpEntity<Unit>(createWaniKaniHeaders(apiKey))
         val response = try {
-            restTemplate.getForObject<T>("$BASE_URL/$path", headers)
+            restTemplate.exchange<T>("$BASE_URL/$path", HttpMethod.GET, requestEntity)
         } catch (_: HttpClientErrorException.Unauthorized) {
             throw ExternalUnauthorizedException()
         } catch (_: Exception) {
-            throw ExternalServerException("Error fetching pending reviews count from WaniKani")
+            throw ExternalServerException("Error fetching Wanikani")
         }
-        response.checkType()
-        return response
+        val body = response.body ?: throw InternalServerException("empty response from Wanikani")
+        body.checkType()
+        return body
+
     }
 
     private fun createWaniKaniHeaders(apiKey: String): HttpHeaders =
-        HttpHeaders().apply { set("Authorization", "Bearer $apiKey") }
+        HttpHeaders().apply { setBearerAuth(apiKey) }
 }

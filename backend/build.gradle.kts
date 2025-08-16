@@ -33,6 +33,7 @@ dependencies {
     implementation("org.springframework.ai:spring-ai-starter-model-openai")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.liquibase:liquibase-core")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")

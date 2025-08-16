@@ -33,18 +33,18 @@ export const formDataFetcher = async (url: string, formData: FormData, options?:
     return response.json();
 };
 
-export const putFetcher = async <Data, Response>(url: string, data?: Data, options?: RequestInit): Promise<Response | undefined> => {
+export const putFetcher = async <Data, Response>(url: string, data?: Data, options?: RequestInit): Promise<Response> => {
     const defaultOptions = createOptions('PUT', options);
     if (data) defaultOptions.body = JSON.stringify(data);
     const response = await fetch(getFullUrl(url), defaultOptions);
 
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    if (response.status === 204) return undefined
+    if (response.status === 204) return {} as Response
     return response.json();
 };
 
 export const deleteFetcher = async (url: string, options?: RequestInit): Promise<undefined> => {
-    const defaultOptions = createOptions('PUT', options);
+    const defaultOptions = createOptions('DELETE', options);
     const response = await fetch(getFullUrl(url), defaultOptions);
 
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
