@@ -5,7 +5,7 @@ import { API_ENDPOINTS } from '../constants/api';
 
 export const useUser = () => useSWR<User>(API_ENDPOINTS.USER.ME, fetcher);
 export const useCounts = () => useSWR<Counts>(API_ENDPOINTS.COURSE.COUNTS, fetcher);
-export const useSettings = () => useSWR<UserSettings>(API_ENDPOINTS.USER.SETTINGS, fetcher);
+export const useSettings = () => useSWR<UserSettings>(API_ENDPOINTS.SETTINGS.SETTINGS, fetcher);
 
 export const useCheckUserExists = (login: string) => {
   const { data, error, mutate } = useSWR<{ exists: boolean }>(

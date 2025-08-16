@@ -1,124 +1,69 @@
-import { getApiUrl } from './config';
+import {getApiUrl} from './config';
 
 export const fetcher = async (url: string, options?: RequestInit) => {
-  const baseUrl = getApiUrl();
-  const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
-  
-  const defaultOptions: RequestInit = {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-    ...options,
-  };
-
-  const response = await fetch(fullUrl, defaultOptions);
-  
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-  
-  return response.json();
+    const defaultOptions = createOptions('GET', options);
+    const response = await fetch(getFullUrl(url), defaultOptions);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return response.json();
 };
 
-export const postFetcher = async (url: string, data?: any, options?: RequestInit) => {
-  const baseUrl = getApiUrl();
-  const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
-  
-  const defaultOptions: RequestInit = {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-    ...options,
-  };
+export const postFetcher = async <Data, Response>(url: string, data?: Data, options?: RequestInit): Promise<Response> => {
+    const defaultOptions = createOptions('POST', options);
+    if (data) defaultOptions.body = JSON.stringify(data);
 
-  if (data) {
-    defaultOptions.body = JSON.stringify(data);
-  }
+    const response = await fetch(getFullUrl(url), defaultOptions);
 
-  const response = await fetch(fullUrl, defaultOptions);
-  
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-  
-  return response.json();
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return response.json();
 };
 
 export const formDataFetcher = async (url: string, formData: FormData, options?: RequestInit) => {
-  const baseUrl = getApiUrl();
-  const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
-  
-  const defaultOptions: RequestInit = {
-    method: 'POST',
-    credentials: 'include',
-    ...options,
-  };
+    const defaultOptions: RequestInit = {
+        method: 'POST',
+        credentials: 'include',
+        ...options,
+    };
 
-  const response = await fetch(fullUrl, {
-    ...defaultOptions,
-    body: formData,
-  });
-  
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-  
-  return response.json();
+    const response = await fetch(getFullUrl(url), {
+        ...defaultOptions,
+        body: formData,
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return response.json();
 };
 
-export const putFetcher = async (url: string, data?: any, options?: RequestInit) => {
-  const baseUrl = getApiUrl();
-  const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
-  
-  const defaultOptions: RequestInit = {
-    method: 'PUT',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-    ...options,
-  };
+export const putFetcher = async <Data, Response>(url: string, data?: Data, options?: RequestInit): Promise<Response> => {
+    const defaultOptions = createOptions('PUT', options);
+    if (data) defaultOptions.body = JSON.stringify(data);
+    const response = await fetch(getFullUrl(url), defaultOptions);
 
-  if (data) {
-    defaultOptions.body = JSON.stringify(data);
-  }
-
-  const response = await fetch(fullUrl, defaultOptions);
-  
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-  
-  // For void endpoints, return undefined
-  return undefined;
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    if (response.status === 204) return {} as Response
+    return response.json();
 };
 
-export const deleteFetcher = async (url: string, options?: RequestInit) => {
-  const baseUrl = getApiUrl();
-  const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
-  
-  const defaultOptions: RequestInit = {
-    method: 'DELETE',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-    ...options,
-  };
+export const deleteFetcher = async (url: string, options?: RequestInit): Promise<undefined> => {
+    const defaultOptions = createOptions('DELETE', options);
+    const response = await fetch(getFullUrl(url), defaultOptions);
 
-  const response = await fetch(fullUrl, defaultOptions);
-  
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-  
-  // For void endpoints, return undefined
-  return undefined;
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    if (response.status === 204) return undefined
+    return response.json();
 };
+
+function createOptions(method: 'GET' | 'PUT' | 'POST' | 'DELETE', options?: RequestInit) {
+    const defaultOptions: RequestInit = {
+        method: method,
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+            ...options?.headers,
+        },
+        ...options,
+    };
+    return defaultOptions;
+}
+
+const getFullUrl = (url: string) =>
+    url.startsWith('http') ? url : getApiUrl() + url;

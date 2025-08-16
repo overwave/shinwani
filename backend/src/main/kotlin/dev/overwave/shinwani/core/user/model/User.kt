@@ -11,7 +11,7 @@ import jakarta.persistence.Table
 data class User(
     val login: String,
     var hash: String,
-    var wanikaniKey: String? = null,
+    var wanikaniToken: String? = null,
     @Convert(converter = AesGcmStringConverter::class)
     var bunproPassword: String? = null,
     @Convert(converter = AesGcmStringConverter::class)

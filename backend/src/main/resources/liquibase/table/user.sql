@@ -17,3 +17,7 @@ ALTER TABLE IF EXISTS user_
     RENAME COLUMN bunpro_key TO bunpro_email;
 ALTER TABLE IF EXISTS user_
     ADD COLUMN IF NOT EXISTS bunpro_password TEXT;
+
+--changeset overwave:rename_wanikani_key
+ALTER TABLE IF EXISTS user_
+    RENAME COLUMN wanikani_key TO wanikani_token;

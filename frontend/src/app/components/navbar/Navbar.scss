@@ -2,13 +2,10 @@
 
 .dropdown-toggle-custom {
   @extend .p-0;
-  @extend .border-0;
+  @extend .border;
+  @extend .rounded-circle;
   @extend .bg-transparent;
-  @extend .shadow-none;
-
-  &:focus {
-    box-shadow: none !important;
-  }
+  @extend .overflow-hidden;
 
   &:hover {
     transform: scale(1.05);

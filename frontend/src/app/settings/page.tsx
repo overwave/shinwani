@@ -1,11 +1,16 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {ChangeEvent, Dispatch, FormEvent, useEffect, useState} from 'react';
 import {Button, Col, Container, FloatingLabel, Form, InputGroup, Row, Spinner} from 'react-bootstrap';
 import {useSettings} from '../services/hooks';
 import Navbar from "@/app/components/navbar/Navbar";
 import {CheckLg, ExclamationTriangle, Trash} from "react-bootstrap-icons";
 import {apiService} from '@/app/services';
+import {UpdateCredentialsResponse} from "@/app/services/types";
+
+type InputState = "loading" | "sync" | "updated" | "just_sync" | "failed" | "wrong";
+
+const cleanupLater = (updater: Dispatch<"sync">) => setTimeout(() => updater("sync"), 3000);
 
 export default function SettingsPage() {
     const {data, error, isLoading, mutate} = useSettings();
@@ -14,196 +19,262 @@ export default function SettingsPage() {
     const [bunproEmail, setBunproEmail] = useState<string | undefined>(undefined);
     const [bunproPassword, setBunproPassword] = useState<string | undefined>(undefined);
 
-    // Loading states
-    const [wanikaniLoading, setWanikaniLoading] = useState(false);
-    const [bunproLoading, setBunproLoading] = useState(false);
+    const [wanikaniInputState, setWanikaniInputState] = useState<InputState>("loading");
+    const [bunproInputState, setBunproInputState] = useState<InputState>("loading");
 
-    // Error states
-    const [wanikaniError, setWanikaniError] = useState<string | null>(null);
-    const [bunproError, setBunproError] = useState<string | null>(null);
+    const [wanikaniLogin, setWanikaniLogin] = useState<string | undefined>(undefined);
+    const [bunproLogin, setBunproLogin] = useState<string | undefined>(undefined);
 
     useEffect(() => {
         if (data) {
-            setWanikaniToken(data.wanikaniApiToken);
-            setBunproEmail(data.bunproEmail);
+            setWanikaniInputState("sync");
+            setBunproInputState("sync");
+            if (data.wanikaniApiToken) setWanikaniToken(data.wanikaniApiToken);
+            if (data.bunproEmail) setBunproEmail(data.bunproEmail);
         }
     }, [data]);
 
-    const handleWanikaniSave = async () => {
-        setWanikaniLoading(true);
-        setWanikaniError(null);
+    const handleSave = async (
+        valueUpdater: Dispatch<string>,
+        inputUpdater: Dispatch<InputState>,
+        saveFunction: () => Promise<UpdateCredentialsResponse>,
+    ) => {
+        inputUpdater("loading");
         try {
-            await apiService.updateWanikaniSettings(wanikaniToken!);
+            const response = await saveFunction();
+            if (!response.login) {
+                inputUpdater("wrong");
+                return;
+            }
             await mutate();
+            inputUpdater("just_sync");
+            valueUpdater(response.login);
+            cleanupLater(inputUpdater);
         } catch (error) {
-            console.error('Failed to save WaniKani settings:', error);
-            setWanikaniError('Failed to save WaniKani settings. Please try again.');
-        } finally {
-            setWanikaniLoading(false);
+            console.error('Failed to save settings:', error);
+            inputUpdater("failed");
         }
-    };
-
-    const handleBunproSave = async () => {
-        setBunproLoading(true);
-        setBunproError(null);
-        try {
-            await apiService.updateBunproSettings(bunproEmail!, bunproPassword!);
-            await mutate();
-        } catch (error) {
-            console.error('Failed to save Bunpro settings:', error);
-            setBunproError('Failed to save Bunpro settings. Please try again.');
-        } finally {
-            setBunproLoading(false);
-        }
-    };
-
-    const handleWanikaniDelete = async () => {
-        setWanikaniLoading(true);
-        setWanikaniError(null);
-        try {
-            await apiService.deleteWanikaniSettings();
-            setWanikaniToken('');
-            await mutate();
-        } catch (error) {
-            console.error('Failed to delete WaniKani settings:', error);
-            setWanikaniError('Failed to delete WaniKani settings. Please try again.');
-        } finally {
-            setWanikaniLoading(false);
-        }
-    };
-
-    const handleBunproDelete = async () => {
-        setBunproLoading(true);
-        setBunproError(null);
-        try {
-            await apiService.deleteBunproSettings();
-            setBunproEmail('');
-            setBunproPassword('');
-            await mutate();
-        } catch (error) {
-            console.error('Failed to delete Bunpro settings:', error);
-            setBunproError('Failed to delete Bunpro settings. Please try again.');
-        } finally {
-            setBunproLoading(false);
-        }
-    };
-
-    if (isLoading) {
-        return (
-            <>
-                <Navbar/>
-                <div className="d-flex justify-content-center mt-5">
-                    <Spinner animation="border" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                </div>
-            </>
-        );
     }
 
-    if (error) {
-        return (
-            <>
-                <Navbar/>
-                <Container className="py-4">
-                    <div className="d-flex flex-column align-items-center justify-content-center mt-5">
-                        <ExclamationTriangle size={64} className="text-danger mb-3"/>
-                        <h2 className="text-danger">Error</h2>
-                        <p className="text-muted">Failed to load settings. Please try refreshing the page.</p>
-                    </div>
-                </Container>
-            </>
-        );
+    const handleWanikaniSave = async () =>
+        handleSave(setWanikaniLogin, setWanikaniInputState,
+            () => apiService.updateWanikaniSettings({apiToken: wanikaniToken!}));
+
+    const handleBunproSave = async () =>
+        handleSave(setBunproLogin, setBunproInputState,
+            () => apiService.updateBunproSettings({email: bunproEmail!, password: bunproPassword!}));
+
+    const handleWanikaniSubmit = async (event: FormEvent) => {
+        event.preventDefault();
+        return handleWanikaniSave();
     }
+    const handleBunproSubmit = async (event: FormEvent) => {
+        event.preventDefault();
+        return handleBunproSave();
+    }
+
+    const handleDelete = async (
+        valueUpdater: Dispatch<undefined>,
+        inputUpdater: Dispatch<InputState>,
+        deleteFunction: () => Promise<void>,
+    ) => {
+        inputUpdater("loading");
+        try {
+            await deleteFunction();
+            await mutate();
+            valueUpdater(undefined);
+            inputUpdater("sync");
+        } catch (error) {
+            console.error('Failed to delete settings:', error);
+            inputUpdater("failed");
+        }
+    }
+
+    const handleWanikaniDelete = async () =>
+        handleDelete(setWanikaniToken, setWanikaniInputState, apiService.deleteWanikaniSettings);
+
+    const handleBunproDelete = async () =>
+        handleDelete(value => {
+            setBunproEmail(value);
+            setBunproPassword(value);
+        }, setBunproInputState, apiService.deleteBunproSettings);
+
+    const onInputChange = (
+        valueUpdater: Dispatch<string | undefined>,
+        inputUpdater: Dispatch<InputState>,
+    ): Dispatch<ChangeEvent<HTMLInputElement>> =>
+        event => {
+            valueUpdater(event.target.value);
+            inputUpdater("updated");
+        };
+
+    const isDisabledInput = (state: InputState): boolean => {
+        switch (state) {
+            case "loading":
+            case "sync":
+            case "just_sync":
+                return true;
+            case "updated":
+            case "failed":
+            case "wrong":
+                return false;
+        }
+    }
+
+    const getWanikaniInputSubtitle = () => {
+        const {text, type} = (() => {
+            switch (wanikaniInputState) {
+                case "failed":
+                    return {text: "Failed to update Wanikani settings. Please try again.", type: "text-danger"}
+                case "wrong":
+                    return {
+                        text: "Failed to verify Wanikani token. Please check it and try again.",
+                        type: "text-danger"
+                    }
+                case "just_sync":
+                    return {text: `Successfully logged in as ${wanikaniLogin}.`, type: "text-success"}
+                case "loading":
+                case "updated":
+                case "sync":
+                    return {text: "API Token should have all the permissions.", type: "text-body-secondary"}
+            }
+        })();
+        return <Form.Text className={`${type} mt-2`}>{text}</Form.Text>
+    };
+
+    const getBunproInputSubtitle = () => {
+        const {text, type} = (() => {
+            switch (bunproInputState) {
+                case "failed":
+                    return {text: "Failed to save Bunpro settings. Please try again.", type: "text-danger"}
+                case "wrong":
+                    return {
+                        text: "Failed to login with given Bunpro credentials. Please check it and try again.",
+                        type: "text-danger"
+                    }
+                case "just_sync":
+                    return {text: `Successfully logged in as ${bunproLogin}.`, type: "text-success"}
+                case "loading":
+                case "updated":
+                case "sync":
+                    return {text: "Password need to be re-entered on e-mail update.", type: "text-body-secondary"}
+            }
+        })();
+        return <Form.Text className={`${type} mt-2`}>{text}</Form.Text>
+    };
+
+    const getLoadingFragment = () =>
+        <div className="d-flex justify-content-center mt-5">
+            <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </Spinner>
+        </div>;
+
+    const getErrorFragment = () =>
+        <Container className="py-4">
+            <div className="d-flex flex-column align-items-center justify-content-center mt-5">
+                <ExclamationTriangle size={64} className="text-danger mb-3"/>
+                <h2 className="text-danger">Error</h2>
+                <p className="text-muted">Failed to load settings. Please try refreshing the page.</p>
+            </div>
+        </Container>;
+
+    const getSettingsFragment = () =>
+        <Container className="py-4">
+            <h1 className="mb-3">Settings</h1>
+            <Row md={2}>
+                <Col>
+                    <Form onSubmit={handleWanikaniSubmit}>
+                        <h4 className="my-3">WaniKani</h4>
+                        <InputGroup>
+                            <FloatingLabel controlId="waniKaniApiKey" label="API Token">
+                                <Form.Control
+                                    type="text"
+                                    placeholder="API Token"
+                                    value={wanikaniToken || ""}
+                                    onChange={onInputChange(setWanikaniToken, setWanikaniInputState)}
+                                />
+                            </FloatingLabel>
+                            {wanikaniToken && (
+                                <Button
+                                    variant="outline-danger"
+                                    onClick={handleWanikaniDelete}
+                                    disabled={wanikaniInputState == "loading"}
+                                    type="reset"
+                                >
+                                    {wanikaniInputState == "loading" ?
+                                        <Spinner animation="border" size="sm" className="m-2"/> :
+                                        <Trash className="m-2"/>}
+                                </Button>
+                            )}
+                            <Button
+                                variant="success"
+                                onClick={handleWanikaniSave}
+                                disabled={!wanikaniToken || isDisabledInput(wanikaniInputState)}
+                                type="submit"
+                            >
+                                {wanikaniInputState == "loading" ?
+                                    <Spinner animation="border" size="sm" className="m-2"/> :
+                                    <CheckLg className="m-2"/>}
+                            </Button>
+                        </InputGroup>
+                        {getWanikaniInputSubtitle()}
+                    </Form>
+
+                    <Form onSubmit={handleBunproSubmit}>
+                        <h4 className="my-3">Bunpro</h4>
+                        <InputGroup>
+                            <FloatingLabel controlId="bunproEmail" label="E-mail">
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Enter your Bunpro email"
+                                    value={bunproEmail || ""}
+                                    onChange={onInputChange(setBunproEmail, setBunproInputState)}
+                                />
+                            </FloatingLabel>
+                            <FloatingLabel controlId="bunproPassword" label="Password">
+                                <Form.Control
+                                    type="password"
+                                    placeholder="Enter your Bunpro password"
+                                    value={bunproPassword || ""}
+                                    onChange={onInputChange(setBunproPassword, setBunproInputState)}
+                                />
+                            </FloatingLabel>
+                            {bunproEmail && (
+                                <Button
+                                    variant="outline-danger"
+                                    onClick={handleBunproDelete}
+                                    disabled={bunproInputState == "loading"}
+                                    type="reset"
+                                >
+                                    {bunproInputState == "loading" ?
+                                        <Spinner animation="border" size="sm" className="m-2"/> :
+                                        <Trash className="m-2"/>}
+                                </Button>
+                            )}
+                            <Button
+                                variant="success"
+                                onClick={handleBunproSave}
+                                disabled={!bunproEmail || !bunproPassword || isDisabledInput(bunproInputState)}
+                                type="submit"
+                            >
+                                {bunproInputState == "loading" ?
+                                    <Spinner animation="border" size="sm" className="m-2"/> :
+                                    <CheckLg className="m-2"/>}
+                            </Button>
+                        </InputGroup>
+                        {getBunproInputSubtitle()}
+                    </Form>
+                </Col>
+            </Row>
+        </Container>;
 
     return (
         <>
             <Navbar/>
-            <Container className="py-4">
-                <h1 className="mb-3">Settings</h1>
-                <Row md={2}>
-                    <Col>
-                        <Form.Group>
-                            <h4 className="my-3">WaniKani</h4>
-                            <InputGroup>
-                                <FloatingLabel controlId="waniKaniApiKey" label="API Token">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="API Token"
-                                        value={wanikaniToken || ""}
-                                        onChange={(e) => setWanikaniToken(e.target.value)}
-                                    />
-                                </FloatingLabel>
-                                {wanikaniToken && (
-                                    <Button
-                                        variant="outline-danger"
-                                        onClick={handleWanikaniDelete}
-                                        disabled={wanikaniLoading}
-                                    >
-                                        {wanikaniLoading ?
-                                            <Spinner animation="border" size="sm" className="m-2"/> :
-                                            <Trash className="m-2"/>}
-                                    </Button>
-                                )}
-                                <Button
-                                    variant="success"
-                                    onClick={handleWanikaniSave}
-                                    disabled={!wanikaniToken || wanikaniLoading}
-                                >
-                                    {wanikaniLoading ?
-                                        <Spinner animation="border" size="sm" className="m-2"/> :
-                                        <CheckLg className="m-2"/>}
-                                </Button>
-                            </InputGroup>
-                            {wanikaniError &&
-                                <Form.Text className="text-danger d-block mt-2">{wanikaniError}</Form.Text>}
-
-                            <h4 className="my-3">Bunpro</h4>
-                            <InputGroup>
-                                <FloatingLabel controlId="bunproEmail" label="E-mail">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Enter your Bunpro email"
-                                        value={bunproEmail || ""}
-                                        onChange={(e) => setBunproEmail(e.target.value)}
-                                    />
-                                </FloatingLabel>
-                                <FloatingLabel controlId="bunproPassword" label="Password">
-                                    <Form.Control
-                                        type="password"
-                                        placeholder="Enter your Bunpro password"
-                                        value={bunproPassword || ""}
-                                        onChange={(e) => setBunproPassword(e.target.value)}
-                                    />
-                                </FloatingLabel>
-                                {bunproEmail && (
-                                    <Button
-                                        variant="outline-danger"
-                                        onClick={handleBunproDelete}
-                                        disabled={bunproLoading}
-                                    >
-                                        {bunproLoading ?
-                                            <Spinner animation="border" size="sm" className="m-2"/> :
-                                            <Trash className="m-2"/>}
-                                    </Button>
-                                )}
-                                <Button
-                                    variant="success"
-                                    onClick={handleBunproSave}
-                                    disabled={!bunproEmail || !bunproPassword || bunproLoading}
-                                >
-                                    {bunproLoading ?
-                                        <Spinner animation="border" size="sm" className="m-2"/> :
-                                        <CheckLg className="m-2"/>}
-                                </Button>
-                            </InputGroup>
-                            {bunproError ?
-                                <Form.Text className="text-danger">{bunproError}</Form.Text> :
-                                <Form.Text muted>Password need to be re-entered on e-mail update.</Form.Text>}
-                        </Form.Group>
-                    </Col>
-                </Row>
-            </Container>
+            {isLoading && getLoadingFragment()}
+            {error && getErrorFragment()}
+            {!isLoading && !error && getSettingsFragment()}
         </>
     );
 }

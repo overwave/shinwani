@@ -77,7 +77,7 @@ export default function Navbar() {
             return (
                 <Dropdown align="end" className="ms-4">
                     <Dropdown.Toggle
-                        variant="light"
+                        variant="outline-primary"
                         id="user-dropdown"
                         className="dropdown-toggle-custom"
                     >
@@ -86,7 +86,6 @@ export default function Navbar() {
                             alt="User Avatar"
                             width={40}
                             height={40}
-                            className="rounded-circle border"
                         />
                     </Dropdown.Toggle>
 
@@ -117,7 +116,7 @@ export default function Navbar() {
     return (
         <BootstrapNavbar bg="light" expand="lg" className="px-3">
             <Container>
-                <BootstrapNavbar.Brand href="#" className="fw-bold">ShinWani</BootstrapNavbar.Brand>
+                <BootstrapNavbar.Brand href="/" className="fw-bold">ShinWani</BootstrapNavbar.Brand>
 
                 <div className="position-absolute start-50 translate-middle-x">
                     <Form>

@@ -25,6 +25,19 @@ export interface UserSettings {
     bunproEmail?: string;
 }
 
+export interface UpdateWanikaniCredentials {
+    apiToken: string;
+}
+
+export interface UpdateBunproCredentials {
+    email: string,
+    password: string;
+}
+
+export interface UpdateCredentialsResponse {
+    login: string | undefined;
+}
+
 // Generic API response shape (flexible to accommodate different backend responses)
 export interface ApiResponse<T = unknown> {
     success?: boolean;
