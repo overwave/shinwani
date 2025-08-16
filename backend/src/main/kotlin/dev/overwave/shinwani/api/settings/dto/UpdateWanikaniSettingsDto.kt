@@ -1,4 +1,4 @@
-package dev.overwave.shinwani.api.user.dto
+package dev.overwave.shinwani.api.settings.dto
 
 data class UpdateWanikaniSettingsDto(
     val apiToken: String
