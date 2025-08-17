@@ -15,7 +15,7 @@ import {
 } from "react-bootstrap";
 import "./Navbar.scss";
 import {apiService} from "@/app/services/api";
-import useSWR, {mutate} from "swr";
+import useSWR from "swr";
 import {useCallback, useState} from "react";
 import {useUser} from "@/app/services/hooks";
 
@@ -58,19 +58,8 @@ export default function Navbar() {
 
     const handleLogout = async () => {
         try {
-            const response = await apiService.logoutUser();
-            if ((response as any)?.success ?? true) {
-                // Clear SWR cache for all user-related data
-                mutate('/users/me');
-                mutate('/courses/counts');
-                // Redirect to login
-                window.location.href = "/login";
-            }
-        } catch (error) {
-            console.error('Logout failed:', error);
-            // Even if logout fails, clear cache and redirect to login
-            mutate('/users/me');
-            mutate('/courses/counts');
+            await apiService.logoutUser();
+        } finally {
             window.location.href = "/login";
         }
     };

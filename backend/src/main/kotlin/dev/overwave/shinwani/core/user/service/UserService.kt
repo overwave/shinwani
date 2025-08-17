@@ -28,7 +28,10 @@ class UserService(
         return UserDetailsDto(user.login, user.hash, authorities = listOf())
     }
 
-    fun checkUserExists(login: String): CheckUserDto = CheckUserDto(exists = userRepository.existsByLogin(login))
+    fun checkUserExists(login: String): CheckUserDto {
+        Thread.sleep(500)
+        return CheckUserDto(exists = userRepository.existsByLogin(login))
+    }
 
     fun getByLogin(login: String): User = userRepository.getByLogin(login)
 
