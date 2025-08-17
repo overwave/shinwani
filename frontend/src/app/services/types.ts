@@ -15,6 +15,10 @@ export type UserLevels = {
 
 export type CourseType = "wanikani" | "bunpro";
 
+export interface UserExists {
+    exists: boolean;
+}
+
 export interface CourseSummary {
     lessons: number;
     reviews: number;

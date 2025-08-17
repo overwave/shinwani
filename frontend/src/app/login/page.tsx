@@ -2,7 +2,7 @@
 
 import { FormEvent, useState, useEffect } from "react";
 import { ArrowLeft } from 'react-bootstrap-icons';
-import { apiService } from '@/app/services';
+import { apiService } from '@/app/services/api';
 import { useCheckUserExists } from '../services/hooks';
 import styles from './Login.module.scss';
 
@@ -21,16 +21,16 @@ export default function LoginPage() {
     const [subStage, setSubStage] = useState<LoginStage | RegistrationStage | PasswordStage>("Idle");
 
     // Use SWR hook for checking user existence
-    const { exists, loading: checkLoading, error: checkError } = useCheckUserExists(login);
+    const { data: checkResult, isLoading: checkLoading, error: checkError } = useCheckUserExists(login);
 
     // Handle user existence check result
     useEffect(() => {
-        if (login && exists !== undefined) {
+        if (login && checkResult !== undefined) {
             setSubStage("Idle");
-            exists ? setStage("Password") : setStage("Registration");
+            setStage(checkResult.exists ? "Password" : "Registration");
             setInput("");
         }
-    }, [login, exists]);
+    }, [login, checkResult]);
 
     const handleLoginInput = (loginInput: string) => {
         if (!loginInput) {
@@ -111,7 +111,7 @@ export default function LoginPage() {
         <div className={styles.formContainer}>
             <main className="border border-success rounded-3">
                 <form onSubmit={handleInput}>
-                    <h1 className="h1 mb-3">📚</h1>
+                    <h1 className="h1 mb-3">神ワニ</h1>
                     <div className={styles.promptLabel}>
                         <div
                             className={`${styles.promptText} ${stage == 'Login' ? 'opacity-100' : 'opacity-0'}`}>
@@ -132,6 +132,7 @@ export default function LoginPage() {
                             placeholder="overwave"
                             className={`form-control ${getError() ? 'is-invalid' : ''}`}
                             value={input}
+                            // autoCorrect="off"
                             onChange={(e) => {
                                 setInput(e.target.value);
                                 setSubStage("Idle");
