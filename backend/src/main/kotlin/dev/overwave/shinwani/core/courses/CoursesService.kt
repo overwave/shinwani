@@ -15,8 +15,8 @@ class CoursesService(
         val user = userService[login]
         val token = user.wanikaniToken ?: throw IllegalArgumentException("Token not set")
         val summary = wanikaniService.getSummary(token)
-        val heap = if (summary.reviewsAvailable > 99) 50 else 0
-        return SummaryDto(lessons = summary.lessonsAvailable, reviews = summary.reviewsAvailable, heap = heap)
+        val heap = if (summary.reviews > 99) 50 else 0
+        return SummaryDto(lessons = summary.lessons, reviews = summary.reviews, heap = heap)
     }
 
     fun getBunproSummary(login: String): SummaryDto {

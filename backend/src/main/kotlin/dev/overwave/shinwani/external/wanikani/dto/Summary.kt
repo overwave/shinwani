@@ -3,8 +3,7 @@ package dev.overwave.shinwani.external.wanikani.dto
 import java.time.Instant
 
 data class Summary(
-    val lessons: Lessons,
-    val reviews: Reviews,
+    val lessons: List<Lesson>,
+    val reviews: List<Review>,
     val nextReviewsAt: Instant?,
-    val reviewsAvailableUntil: Instant?
 )
