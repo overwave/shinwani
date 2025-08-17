@@ -92,8 +92,8 @@ export default function Navbar() {
                     <Dropdown.Menu>
                         <h5 className="mx-3 mt-2 mb-3">
                             {user.login}
-                            <span className="user-level-pill text-bg-wani">{(user.levels ?? {})["wani"] || 42}</span>
-                            <span className="user-level-pill text-bg-bun">{(user.levels ?? {})["bun"] || 73}</span>
+                            <span className="user-level-pill text-bg-wani">{(user.levels ?? {})["wanikani"] || 42}</span>
+                            <span className="user-level-pill text-bg-bun">{(user.levels ?? {})["bunpro"] || 73}</span>
                         </h5>
 
                         <Dropdown.Divider/>

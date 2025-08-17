@@ -2,13 +2,18 @@ export interface User {
     login: string;
     avatar: string;
     levels: UserLevels | undefined;
+    courses: ConfiguredCourses;
+}
+
+export type ConfiguredCourses = {
+    [Key in CourseType]: boolean;
 }
 
 export type UserLevels = {
     [Key in CourseType]?: number
 }
 
-export type CourseType = "wani" | "bun";
+export type CourseType = "wanikani" | "bunpro";
 
 export interface CourseCounts {
     lessons: number;
