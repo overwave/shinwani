@@ -1,4 +1,5 @@
 import {getApiUrl} from './config';
+import {HttpError} from "@/app/services/types";
 
 export const postFetcher = async <Data, Response>(url: string, data?: Data, options?: RequestInit): Promise<Response> => {
     const defaultOptions = createOptions('POST', options);
@@ -6,41 +7,44 @@ export const postFetcher = async <Data, Response>(url: string, data?: Data, opti
 
     const response = await fetch(getFullUrl(url), defaultOptions);
 
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response.ok) throw new HttpError(response.status);
     return response.json();
 };
 
-export const formDataFetcher = async (url: string, formData: FormData, options?: RequestInit) => {
-    const defaultOptions: RequestInit = {
-        method: 'POST',
-        credentials: 'include',
-        ...options,
+export const formDataFetcher =
+    async <Response>(url: string, formData: FormData, options?: RequestInit): Promise<Response> => {
+        const defaultOptions: RequestInit = {
+            method: 'POST',
+            credentials: 'include',
+            ...options,
+        };
+
+        const response = await fetch(getFullUrl(url), {
+            ...defaultOptions,
+            body: formData,
+        });
+
+        if (!response.ok) throw new HttpError(response.status);
+        if (response.status == 204) return {} as Response
+        return response.json();
     };
 
-    const response = await fetch(getFullUrl(url), {
-        ...defaultOptions,
-        body: formData,
-    });
+export const putFetcher =
+    async <Data, Response>(url: string, data?: Data, options?: RequestInit): Promise<Response> => {
+        const defaultOptions = createOptions('PUT', options);
+        if (data) defaultOptions.body = JSON.stringify(data);
+        const response = await fetch(getFullUrl(url), defaultOptions);
 
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return response.json();
-};
-
-export const putFetcher = async <Data, Response>(url: string, data?: Data, options?: RequestInit): Promise<Response> => {
-    const defaultOptions = createOptions('PUT', options);
-    if (data) defaultOptions.body = JSON.stringify(data);
-    const response = await fetch(getFullUrl(url), defaultOptions);
-
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    if (response.status === 204) return {} as Response
-    return response.json();
-};
+        if (!response.ok) throw new HttpError(response.status);
+        if (response.status == 204) return {} as Response
+        return response.json();
+    };
 
 export const deleteFetcher = async (url: string, options?: RequestInit): Promise<undefined> => {
     const defaultOptions = createOptions('DELETE', options);
     const response = await fetch(getFullUrl(url), defaultOptions);
 
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response.ok) throw new HttpError(response.status);
     if (response.status === 204) return undefined
     return response.json();
 };

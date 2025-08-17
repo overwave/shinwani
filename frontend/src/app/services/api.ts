@@ -7,23 +7,24 @@ import {
     User
 } from './types';
 import {API_ENDPOINTS} from '../constants/api';
+import {mutate} from "swr";
 
 class ApiService {
     registerUser = async (login: string, password: string): Promise<ApiResponse<User>> =>
         postFetcher(API_ENDPOINTS.USER.REGISTER, {login, password});
 
-    async loginUser(username: string, password: string, rememberMe: boolean = true): Promise<ApiResponse<User>> {
+    async loginUser(username: string, password: string, rememberMe: boolean = true) {
         const formData = new FormData();
         formData.append('username', username);
         formData.append('password', password);
         if (rememberMe) {
             formData.append('remember-me', 'true');
         }
-
-        return formDataFetcher(API_ENDPOINTS.USER.LOGIN, formData);
+        await formDataFetcher(API_ENDPOINTS.USER.LOGIN, formData);
+        await mutate(() => true, undefined, {revalidate: false});
     }
 
-    logoutUser = async (): Promise<ApiResponse<void>> => postFetcher(API_ENDPOINTS.USER.LOGOUT);
+    logoutUser = async (): Promise<undefined> => postFetcher(API_ENDPOINTS.USER.LOGOUT);
 
     updateWanikaniSettings = async (credentials: UpdateWanikaniCredentials): Promise<UpdateCredentialsResponse> =>
         putFetcher(API_ENDPOINTS.SETTINGS.UPDATE_WANIKANI, credentials);

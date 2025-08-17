@@ -1,11 +1,9 @@
 package dev.overwave.shinwani.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import dev.overwave.shinwani.api.user.dto.LoginDto
-import dev.overwave.shinwani.api.user.dto.LoginStatus
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
+import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -18,9 +16,7 @@ import kotlin.time.Duration.Companion.days
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfiguration(
-    private val objectMapper: ObjectMapper,
-) {
+class SecurityConfiguration {
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
@@ -47,18 +43,14 @@ class SecurityConfiguration(
             }.formLogin {
                 it.loginPage("/login")
                 it.loginProcessingUrl("/api/users/login")
-                it.successHandler { _, response, _ ->
-                    response.writer.write(objectMapper.writeValueAsString(LoginDto(LoginStatus.SUCCESS)))
-                }
-                it.failureHandler { _, response, _ ->
-                    response.writer.write(objectMapper.writeValueAsString(LoginDto(LoginStatus.FAILED)))
-                    response.status = 403
-                }
+                it.successHandler { _, response, _ -> response.status = HttpStatus.NO_CONTENT.value() }
+                it.failureHandler { _, response, _ -> response.status = HttpStatus.UNAUTHORIZED.value() }
                 it.permitAll()
             }.cors {
             }.logout {
                 it.logoutUrl("/api/users/logout")
                 it.deleteCookies("JSESSIONID")
+                it.logoutSuccessHandler { _, response, _ -> response.status = HttpStatus.NO_CONTENT.value() }
                 it.permitAll()
             }.csrf {
                 it.disable() // TODO enable
