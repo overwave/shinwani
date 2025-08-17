@@ -1,6 +1,6 @@
 package dev.overwave.shinwani.external.wanikani
 
-import dev.overwave.shinwani.external.wanikani.dto.PendingReviewsCount
+import dev.overwave.shinwani.external.wanikani.dto.LearningSummary
 import dev.overwave.shinwani.external.wanikani.dto.ResponseObject
 import dev.overwave.shinwani.external.wanikani.dto.SummaryResponse
 import dev.overwave.shinwani.external.wanikani.dto.User
@@ -22,29 +22,25 @@ class WanikaniService(
     private val restTemplate: RestTemplate,
 ) {
     fun checkUserByApiToken(apiToken: String): User? =
-        try {
-            makeWaniKaniRequest<UserResponse>(USER_PATH, apiToken).data
-        } catch (_: ExternalUnauthorizedException) {
-            null
-        }
+        runCatching { makeWaniKaniRequest<UserResponse>(USER_PATH, apiToken).data }
+            .getOrElse { if (it is ExternalUnauthorizedException) null else throw it }
 
-    fun getPendingReviewsCount(apiKey: String): PendingReviewsCount {
+    fun getSummary(apiKey: String): LearningSummary {
         require(apiKey.isNotBlank()) { "apiKey must not be blank" }
         val response = makeWaniKaniRequest<SummaryResponse>(SUMMARY_PATH, apiKey)
-        return PendingReviewsCount(
-            lessonsAvailable = response.data.lessons.available,
-            reviewsAvailable = response.data.reviews.available,
-        )
+        val firstLesson = response.data.lessons.firstOrNull()?.subjectIds ?: listOf()
+        val firstReview = response.data.reviews.firstOrNull()?.subjectIds ?: listOf()
+        return LearningSummary(lessons = firstLesson.count(), reviews = firstReview.count())
     }
 
     private inline fun <reified T : ResponseObject> makeWaniKaniRequest(path: String, apiKey: String): T {
         val requestEntity = HttpEntity<Unit>(createWaniKaniHeaders(apiKey))
         val response = try {
             restTemplate.exchange<T>("$BASE_URL/$path", HttpMethod.GET, requestEntity)
-        } catch (_: HttpClientErrorException.Unauthorized) {
-            throw ExternalUnauthorizedException()
-        } catch (_: Exception) {
-            throw ExternalServerException("Error fetching Wanikani")
+        } catch (e: HttpClientErrorException.Unauthorized) {
+            throw ExternalUnauthorizedException(cause = e)
+        } catch (e: Exception) {
+            throw ExternalServerException("Error fetching Wanikani", e)
         }
         val body = response.body ?: throw InternalServerException("empty response from Wanikani")
         body.checkType()

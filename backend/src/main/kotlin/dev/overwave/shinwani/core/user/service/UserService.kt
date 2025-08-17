@@ -30,7 +30,9 @@ class UserService(
 
     fun checkUserExists(login: String): CheckUserDto = CheckUserDto(exists = userRepository.existsByLogin(login))
 
-    fun getUserByLogin(login: String): User = userRepository.getByLogin(login)
+    fun getByLogin(login: String): User = userRepository.getByLogin(login)
+
+    operator fun get(login: String): User = userRepository.getByLogin(login)
 
     fun registerUser(login: String, password: String) {
         if (userRepository.existsByLogin(login)) throw UserExistsException(login)
