@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service
 class CountsService {
     fun getCounts(): CountsDto =
         CountsDto(
-            wani = CourseCountsDto(
+            wanikani = CourseCountsDto(
                 lessons = listOf(0, 10, 100).random(),
                 reviews = listOf(0, 20, 50).random(),
                 heap = listOf(0, 5).random(),
             ),
-            bun = CourseCountsDto(
+            bunpro = CourseCountsDto(
                 lessons = listOf(0, 10, 100).random(),
                 reviews = listOf(0, 20, 50).random(),
                 heap = listOf(0, 5).random(),

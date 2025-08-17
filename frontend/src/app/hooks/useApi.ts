@@ -7,8 +7,8 @@ export const useUser = () => {
     return useSWR<User>(API_ENDPOINTS.USER.ME, fetcher);
 };
 
-export const useCourseCounts = () => {
-    return useSWR<Counts>(API_ENDPOINTS.COURSE.COUNTS, fetcher);
+export const useCourseCounts = (skipCall: boolean = false) => {
+    return useSWR<Counts>(skipCall ? null : API_ENDPOINTS.COURSE.COUNTS, fetcher);
 };
 
 export {fetcher};

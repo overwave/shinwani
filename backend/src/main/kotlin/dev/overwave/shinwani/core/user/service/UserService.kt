@@ -2,6 +2,7 @@ package dev.overwave.shinwani.core.user.service
 
 import dev.overwave.shinwani.api.settings.dto.UserSettingsDto
 import dev.overwave.shinwani.api.user.dto.CheckUserDto
+import dev.overwave.shinwani.api.user.dto.ConfiguredCoursesDto
 import dev.overwave.shinwani.api.user.dto.CredentialsUpdateResponse
 import dev.overwave.shinwani.api.user.dto.UserDetailsDto
 import dev.overwave.shinwani.api.user.dto.UserDto
@@ -12,12 +13,14 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.time.Clock
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val waniKaniService: WanikaniService,
+    private val clock: Clock,
 ) : UserDetailsService {
 
     override fun loadUserByUsername(login: String): UserDetails {
@@ -39,10 +42,14 @@ class UserService(
         )
     }
 
-    fun selfInfo(login: String): UserDto = UserDto(
-        login = userRepository.getByLogin(login).login,
-        avatar = "https://i.pravatar.cc/150?img=3",
-    )
+    fun selfInfo(login: String): UserDto {
+        val user = userRepository.getByLogin(login)
+        val courses = ConfiguredCoursesDto(
+            wanikani = user.wanikaniToken != null,
+            bunpro = user.bunproTokenValidUntil?.isAfter(clock.instant()) ?: false,
+        )
+        return UserDto(login = user.login, avatar = "https://i.pravatar.cc/150?img=3", courses)
+    }
 
     fun getUserSettings(login: String): UserSettingsDto {
         val user = userRepository.getByLogin(login)

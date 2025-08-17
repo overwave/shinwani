@@ -4,9 +4,10 @@ import {ChangeEvent, Dispatch, FormEvent, useEffect, useState} from 'react';
 import {Button, Col, Container, FloatingLabel, Form, InputGroup, Row, Spinner} from 'react-bootstrap';
 import {useSettings} from '../services/hooks';
 import Navbar from "@/app/components/navbar/Navbar";
-import {CheckLg, ExclamationTriangle, Trash} from "react-bootstrap-icons";
+import {CheckLg, Trash} from "react-bootstrap-icons";
 import {apiService} from '@/app/services';
 import {UpdateCredentialsResponse} from "@/app/services/types";
+import Error from "@/app/components/error/Error";
 
 type InputState = "loading" | "sync" | "updated" | "just_sync" | "failed" | "wrong";
 
@@ -170,15 +171,6 @@ export default function SettingsPage() {
             </Spinner>
         </div>;
 
-    const getErrorFragment = () =>
-        <Container className="py-4">
-            <div className="d-flex flex-column align-items-center justify-content-center mt-5">
-                <ExclamationTriangle size={64} className="text-danger mb-3"/>
-                <h2 className="text-danger">Error</h2>
-                <p className="text-muted">Failed to load settings. Please try refreshing the page.</p>
-            </div>
-        </Container>;
-
     const getSettingsFragment = () =>
         <Container className="py-4">
             <h1 className="mb-3">Settings</h1>
@@ -273,7 +265,7 @@ export default function SettingsPage() {
         <>
             <Navbar/>
             {isLoading && getLoadingFragment()}
-            {error && getErrorFragment()}
+            {error && <Error text="Failed to load settings. Please try refreshing the page."/>}
             {!isLoading && !error && getSettingsFragment()}
         </>
     );

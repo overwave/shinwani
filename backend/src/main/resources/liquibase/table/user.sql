@@ -21,3 +21,8 @@ ALTER TABLE IF EXISTS user_
 --changeset overwave:rename_wanikani_key
 ALTER TABLE IF EXISTS user_
     RENAME COLUMN wanikani_key TO wanikani_token;
+
+--changeset overwave:add_bunpro_token_fields
+ALTER TABLE IF EXISTS user_
+    ADD COLUMN IF NOT EXISTS bunpro_token             TEXT,
+    ADD COLUMN IF NOT EXISTS bunpro_token_valid_until TIMESTAMPTZ;
