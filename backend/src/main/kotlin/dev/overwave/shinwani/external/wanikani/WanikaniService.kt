@@ -1,6 +1,6 @@
 package dev.overwave.shinwani.external.wanikani
 
-import dev.overwave.shinwani.external.wanikani.dto.PendingReviewsCount
+import dev.overwave.shinwani.external.wanikani.dto.LearningSummary
 import dev.overwave.shinwani.external.wanikani.dto.ResponseObject
 import dev.overwave.shinwani.external.wanikani.dto.SummaryResponse
 import dev.overwave.shinwani.external.wanikani.dto.User
@@ -28,10 +28,10 @@ class WanikaniService(
             null
         }
 
-    fun getPendingReviewsCount(apiKey: String): PendingReviewsCount {
+    fun getSummary(apiKey: String): LearningSummary {
         require(apiKey.isNotBlank()) { "apiKey must not be blank" }
         val response = makeWaniKaniRequest<SummaryResponse>(SUMMARY_PATH, apiKey)
-        return PendingReviewsCount(
+        return LearningSummary(
             lessonsAvailable = response.data.lessons.available,
             reviewsAvailable = response.data.reviews.available,
         )

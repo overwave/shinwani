@@ -15,15 +15,11 @@ export type UserLevels = {
 
 export type CourseType = "wanikani" | "bunpro";
 
-export interface CourseCounts {
+export interface CourseSummary {
     lessons: number;
     reviews: number;
     heap: number;
 }
-
-export type Counts = {
-    [Key in CourseType]?: CourseCounts;
-};
 
 export interface UserSettings {
     wanikaniApiToken?: string;

@@ -15,7 +15,11 @@ export const API_ENDPOINTS = {
         DELETE_BUNPRO: '/settings/bunpro',
     },
 
-    COURSE: {
-        COUNTS: '/courses/counts',
+    WANIKANI: {
+        SUMMARY: '/wanikani/summary',
+    },
+
+    BUNPRO: {
+        SUMMARY: '/bunpro/summary',
     },
 } as const;

@@ -1,8 +1,7 @@
 package dev.overwave.shinwani.core.user.model
 
 import org.springframework.http.HttpStatus
-import org.springframework.web.server.ResponseStatusException
+import org.springframework.web.bind.annotation.ResponseStatus
 
-class UserNotFoundException(
-    login: String,
-) : ResponseStatusException(HttpStatus.NOT_FOUND, "User $login not found")
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class UserNotFoundException(login: String) : RuntimeException("User $login not found")

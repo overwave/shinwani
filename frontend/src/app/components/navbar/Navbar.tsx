@@ -3,29 +3,37 @@
 import Image from "next/image";
 import Link from "next/link";
 import {BoxArrowRight, Gear, Person, Search, X} from 'react-bootstrap-icons';
-import {Button, Container, Dropdown, Form, FormControl, Modal, Navbar as BootstrapNavbar, Placeholder} from "react-bootstrap";
+import {
+    Button,
+    Container,
+    Dropdown,
+    Form,
+    FormControl,
+    Modal,
+    Navbar as BootstrapNavbar,
+    Placeholder
+} from "react-bootstrap";
 import "./Navbar.scss";
-import {apiService} from "../../services/api";
-import {mutate} from "swr";
-import {useState, useCallback} from "react";
-import useSWR from "swr";
-import {useUser} from "@/app/hooks/useApi";
+import {apiService} from "@/app/services/api";
+import useSWR, {mutate} from "swr";
+import {useCallback, useState} from "react";
+import {useUser} from "@/app/services/hooks";
 
 export default function Navbar() {
-    const { data: user, isLoading: userLoading } = useUser();
+    const {data: user, isLoading: userLoading} = useUser();
     const [showSearchModal, setShowSearchModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    
+
     // Debounced search with SWR
-    const { data: searchResults, isLoading: isSearching } = useSWR(
+    const {data: searchResults, isLoading: isSearching} = useSWR(
         searchQuery ? `/api/search?q=${encodeURIComponent(searchQuery)}` : null,
         async (url) => {
             // Mock backend response for now
             await new Promise(resolve => setTimeout(resolve, 300)); // Simulate network delay
             return [
-                { id: 1, title: "Sample Result 1", type: "lesson" },
-                { id: 2, title: "Sample Result 2", type: "review" },
-                { id: 3, title: "Sample Result 3", type: "kanji" }
+                {id: 1, title: "Sample Result 1", type: "lesson"},
+                {id: 2, title: "Sample Result 2", type: "review"},
+                {id: 3, title: "Sample Result 3", type: "kanji"}
             ];
         },
         {
@@ -92,7 +100,8 @@ export default function Navbar() {
                     <Dropdown.Menu>
                         <h5 className="mx-3 mt-2 mb-3">
                             {user.login}
-                            <span className="user-level-pill text-bg-wani">{(user.levels ?? {})["wanikani"] || 42}</span>
+                            <span
+                                className="user-level-pill text-bg-wani">{(user.levels ?? {})["wanikani"] || 42}</span>
                             <span className="user-level-pill text-bg-bun">{(user.levels ?? {})["bunpro"] || 73}</span>
                         </h5>
 
@@ -163,12 +172,12 @@ export default function Navbar() {
                         />
                         <div className="position-absolute top-50 end-0 translate-middle-y pe-3">
                             <Button variant="link" className="p-0 text-muted" onClick={handleCloseSearchModal}>
-                                <X size={24} />
+                                <X size={24}/>
                             </Button>
                         </div>
                     </div>
                 </Modal.Header>
-                
+
                 <Modal.Body className="pt-0">
                     {searchQuery && (
                         <div>
@@ -184,7 +193,8 @@ export default function Navbar() {
                                         <div key={result.id} className="search-result-item p-3 border-bottom">
                                             <div className="d-flex align-items-center">
                                                 <div className="me-3">
-                                                    <span className={`badge bg-${result.type === 'lesson' ? 'primary' : result.type === 'review' ? 'success' : 'warning'}`}>
+                                                    <span
+                                                        className={`badge bg-${result.type === 'lesson' ? 'primary' : result.type === 'review' ? 'success' : 'warning'}`}>
                                                         {result.type}
                                                     </span>
                                                 </div>
@@ -198,16 +208,16 @@ export default function Navbar() {
                                 </div>
                             ) : (
                                 <div className="text-center py-4 text-muted">
-                                    <Search size={48} className="mb-3" />
+                                    <Search size={48} className="mb-3"/>
                                     <p>No results found for "{searchQuery}"</p>
                                 </div>
                             )}
                         </div>
                     )}
-                    
+
                     {!searchQuery && (
                         <div className="text-center py-5 text-muted">
-                            <Search size={64} className="mb-3" />
+                            <Search size={64} className="mb-3"/>
                             <h5>Search ShinWani</h5>
                             <p>Start typing to search for lessons, reviews, and kanji</p>
                         </div>

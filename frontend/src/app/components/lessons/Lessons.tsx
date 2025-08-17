@@ -11,7 +11,7 @@ export interface ComponentProps {
 
 export default function Lessons({lessons, type}: ComponentProps) {
     return (
-        <Card className={"h-100 text-center p-3 shadow " + (lessons ? "" : "bg-light text-muted")}>
+        <Card className={"text-center p-3 shadow " + (lessons ? "" : "bg-light text-muted")}>
             <Row className="g-0">
                 <Col md={4}>
                     {lessons ?
@@ -26,7 +26,7 @@ export default function Lessons({lessons, type}: ComponentProps) {
                         {lessons ?
                             <Card.Text>{lessons} lessons waiting for you!</Card.Text> :
                             <Card.Text>Good job, you&#39;ve done all lessons!</Card.Text>}
-                        {!!lessons && <Button variant={"primary"} className="w-100 mt-3">Start Lessons</Button>}
+                        {!!lessons && <Button variant="primary" className="w-100 mt-3">Start Lessons</Button>}
                     </Card.Body>
                 </Col>
             </Row>

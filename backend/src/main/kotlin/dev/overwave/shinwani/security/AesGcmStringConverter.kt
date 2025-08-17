@@ -1,4 +1,4 @@
-package dev.overwave.shinwani.secure
+package dev.overwave.shinwani.security
 
 import dev.overwave.shinwani.core.util.SpringContext
 import jakarta.persistence.AttributeConverter
