@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -38,9 +39,11 @@ class SecurityConfiguration(
         http
             .authorizeHttpRequests {
                 it
-                    .requestMatchers("/api/users/me")
+                    .requestMatchers("/api/users/me", "/api/wanikani/**", "/api/bunpro/**")
                     .authenticated()
                 it.anyRequest().permitAll()
+            }.exceptionHandling {
+                it.authenticationEntryPoint(Http403ForbiddenEntryPoint())
             }.formLogin {
                 it.loginPage("/login")
                 it.loginProcessingUrl("/api/users/login")

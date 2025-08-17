@@ -1,12 +1,5 @@
 import {getApiUrl} from './config';
 
-export const fetcher = async (url: string, options?: RequestInit) => {
-    const defaultOptions = createOptions('GET', options);
-    const response = await fetch(getFullUrl(url), defaultOptions);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return response.json();
-};
-
 export const postFetcher = async <Data, Response>(url: string, data?: Data, options?: RequestInit): Promise<Response> => {
     const defaultOptions = createOptions('POST', options);
     if (data) defaultOptions.body = JSON.stringify(data);
@@ -52,18 +45,15 @@ export const deleteFetcher = async (url: string, options?: RequestInit): Promise
     return response.json();
 };
 
-function createOptions(method: 'GET' | 'PUT' | 'POST' | 'DELETE', options?: RequestInit) {
-    const defaultOptions: RequestInit = {
-        method: method,
-        credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json',
-            ...options?.headers,
-        },
-        ...options,
-    };
-    return defaultOptions;
-}
+export const createOptions = (method: 'GET' | 'PUT' | 'POST' | 'DELETE', options?: RequestInit): RequestInit => ({
+    method: method,
+    credentials: 'include',
+    headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers,
+    },
+    ...options,
+});
 
-const getFullUrl = (url: string) =>
+export const getFullUrl = (url: string) =>
     url.startsWith('http') ? url : getApiUrl() + url;

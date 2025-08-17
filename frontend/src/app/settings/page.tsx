@@ -5,7 +5,7 @@ import {Button, Col, Container, FloatingLabel, Form, InputGroup, Row, Spinner} f
 import {useSettings} from '../services/hooks';
 import Navbar from "@/app/components/navbar/Navbar";
 import {CheckLg, Trash} from "react-bootstrap-icons";
-import {apiService} from '@/app/services';
+import {apiService} from '@/app/services/api';
 import {UpdateCredentialsResponse} from "@/app/services/types";
 import Error from "@/app/components/error/Error";
 
